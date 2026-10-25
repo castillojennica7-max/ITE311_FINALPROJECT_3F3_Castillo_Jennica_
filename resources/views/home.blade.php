@@ -21,7 +21,17 @@
     </style>
 </head>
 <body>
-    <header>SalonSync</header>
+        <header style="display: flex; justify-content: space-between; align-items: center;">
+        <span>SalonSync</span>
+        <nav style="font-size: 16px; font-weight: normal;">
+            @auth
+                <a href="{{ route('dashboard') }}" style="color: #fff; margin-left: 16px;">Dashboard</a>
+            @else
+                <a href="{{ route('login') }}" style="color: #fff; margin-left: 16px;">Log in</a>
+                <a href="{{ route('register') }}" style="color: #fff; margin-left: 16px;">Sign up</a>
+            @endauth
+        </nav>
+    </header>
 
     @unless($cmsOnline)
         <div class="warning">The content server is currently unavailable. Please try again later.</div>
