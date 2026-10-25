@@ -8,9 +8,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Appointment extends Model
 {
     protected $fillable = [
-        'customer_id',
-        'service_id',
+        'user_id',
         'staff_id',
+        'service_document_id',
+        'service_name',
+        'service_price',
+        'service_duration_minutes',
         'appointment_at',
         'status',
         'notes',
@@ -18,16 +21,12 @@ class Appointment extends Model
 
     protected $casts = [
         'appointment_at' => 'datetime',
+        'service_price'  => 'decimal:2',
     ];
 
-    public function customer(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Customer::class);
-    }
-
-    public function service(): BelongsTo
-    {
-        return $this->belongsTo(Service::class);
+        return $this->belongsTo(User::class);
     }
 
     public function staff(): BelongsTo
