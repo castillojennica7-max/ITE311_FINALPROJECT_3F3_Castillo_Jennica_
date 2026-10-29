@@ -7,6 +7,8 @@ use App\Models\Staff;
 use App\Services\StrapiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use App\Notifications\AppointmentBooked;
+use Illuminate\Support\Facades\Log;
 
 class AppointmentController extends Controller
 {
@@ -77,7 +79,7 @@ class AppointmentController extends Controller
             }
         }
 
-        $request->user()->appointments()->create([
+               $appointment = $request->user()->appointments()->create([
             'staff_id'                 => $data['staff_id'] ?? null,
             'service_document_id'      => $service['documentId'],
             'service_name'             => $service['name'],
@@ -87,8 +89,15 @@ class AppointmentController extends Controller
             'notes'                    => $data['notes'] ?? null,
         ]);
 
+        // Ang pagkabigo ng email ay hindi dapat makasira sa booking
+        try {
+            $request->user()->notify(new AppointmentBooked($appointment));
+        } catch (\Throwable $e) {
+            Log::warning('Failed to send booking email: ' . $e->getMessage());
+        }
+
         return redirect()->route('appointments.index')
-            ->with('success', 'Your appointment has been booked!');
+            ->with('success', 'Your appointment has been booked! A confirmation email was sent.');
     }
 
     // I-cancel ang sariling appointment

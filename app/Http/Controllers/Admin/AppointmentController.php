@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use Illuminate\Http\Request;
+use App\Notifications\AppointmentStatusChanged;
+use Illuminate\Support\Facades\Log;
 
 class AppointmentController extends Controller
 {
@@ -33,8 +35,17 @@ class AppointmentController extends Controller
             'status' => 'required|in:' . implode(',', self::STATUSES),
         ]);
 
-        $appointment->update($data);
+                $appointment->update($data);
 
-        return back()->with('success', 'Appointment status updated.');
+        // Magpapadala lang ng email kung talagang nagbago ang status
+        if ($appointment->wasChanged('status')) {
+            try {
+                $appointment->user->notify(new AppointmentStatusChanged($appointment));
+            } catch (\Throwable $e) {
+                Log::warning('Failed to send status email: ' . $e->getMessage());
+            }
+        }
+
+        return back()->with('success', 'Appointment status updated and the customer was notified.');
     }
 }
