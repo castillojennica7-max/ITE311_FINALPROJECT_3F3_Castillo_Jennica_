@@ -1,0 +1,41 @@
+{
+  "kind": "collectionType",
+  "collectionName": "reports",
+  "info": {
+    "singularName": "report",
+    "pluralName": "reports",
+    "displayName": "Report"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "report_date": {
+      "type": "date",
+      "required": true,
+      "unique": true
+    },
+    "total_appointments": {
+      "type": "integer"
+    },
+    "pending_count": {
+      "type": "integer"
+    },
+    "confirmed_count": {
+      "type": "integer"
+    },
+    "completed_count": {
+      "type": "integer"
+    },
+    "cancelled_count": {
+      "type": "integer"
+    },
+    "total_customers": {
+      "type": "integer"
+    },
+    "completed_revenue": {
+      "type": "decimal"
+    }
+  }
+}
