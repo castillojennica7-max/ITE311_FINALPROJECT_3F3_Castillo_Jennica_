@@ -18,6 +18,7 @@
 @if(auth()->user()->isAdmin())
     <p class="mt-6 font-semibold">Admin pages:</p>
     <ul class="list-disc ml-6 mt-2">
+        <li><a class="text-indigo-600 underline" href="{{ route('admin.appointments.index') }}">Manage Appointments</a></li>
         <li><a class="text-indigo-600 underline" href="{{ route('customers.index') }}">Customers</a></li>
         <li><a class="text-indigo-600 underline" href="{{ route('services.index') }}">Services</a></li>
         <li><a class="text-indigo-600 underline" href="{{ route('staff.index') }}">Staff</a></li>

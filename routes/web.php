@@ -7,6 +7,7 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\StaffController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\Admin\AppointmentController as AdminAppointmentController;
 
 // Public home page (content galing sa Strapi)
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -36,6 +37,12 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     Route::resource('staff', StaffController::class)
         ->only(['index', 'create', 'store']);
+
+        Route::get('/manage/appointments', [AdminAppointmentController::class, 'index'])
+        ->name('admin.appointments.index');
+
+    Route::patch('/manage/appointments/{appointment}/status', [AdminAppointmentController::class, 'updateStatus'])
+        ->name('admin.appointments.status');
 });
 
 require __DIR__ . '/auth.php';
