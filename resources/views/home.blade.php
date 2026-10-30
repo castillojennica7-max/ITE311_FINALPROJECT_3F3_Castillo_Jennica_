@@ -76,6 +76,36 @@
         </div>
     </section>
 
+        <section id="pricing">
+        <h2>Subscription Plans for Salons</h2>
+        <div class="cards">
+            @forelse($plans as $plan)
+                <div class="card" style="{{ ($plan['is_featured'] ?? false) ? 'border: 2px solid #7b2d5f;' : '' }}">
+                    @if($plan['is_featured'] ?? false)
+                        <small class="price">MOST POPULAR</small>
+                    @endif
+                    <h3>{{ $plan['name'] }}</h3>
+                    <p class="price" style="font-size: 24px;">
+                        ₱{{ number_format($plan['price'], 2) }}
+                        <small style="color: #888; font-weight: normal;">/ month</small>
+                    </p>
+                    <p>{{ $plan['description'] ?? '' }}</p>
+                    <ul>
+                        @foreach(array_filter(array_map('trim', explode("\n", $plan['features'] ?? ''))) as $feature)
+                            <li>{{ $feature }}</li>
+                        @endforeach
+                    </ul>
+                    <a href="{{ route('subscriptions.create', $plan['documentId']) }}"
+                       style="display: inline-block; background: #7b2d5f; color: #fff; padding: 10px 20px; border-radius: 6px; text-decoration: none;">
+                        Subscribe
+                    </a>
+                </div>
+            @empty
+                <p>No plans available.</p>
+            @endforelse
+        </div>
+    </section>
+    
     <footer>&copy; SalonSync</footer>
 </body>
 </html>

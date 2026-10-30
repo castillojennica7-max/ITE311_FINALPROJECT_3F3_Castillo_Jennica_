@@ -17,6 +17,7 @@ class HomeController extends Controller
             'pagination' => ['pageSize' => 3],
         ]);
         $services = $this->fetch("$base/api/services", ['sort' => 'name:asc']);
+        $plans = $this->fetch("$base/api/plans", ['sort' => 'price:asc']);
 
         $announcementList = collect($announcements['data'] ?? [])->map(fn ($a) => [
             'title' => $a['title'] ?? '',
@@ -28,6 +29,7 @@ class HomeController extends Controller
             'announcements' => $announcementList,
             'services'      => $services['data'] ?? [],
             'cmsOnline'     => $home !== null,
+            'plans'         => $plans['data'] ?? [],
         ]);
     }
 

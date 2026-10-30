@@ -33,6 +33,29 @@ class StrapiService
         return null;
     }
 
+        /**
+     * Kinukuha ang listahan ng subscription plans mula sa Strapi CMS.
+     */
+    public function plans(): ?array
+    {
+        $base = rtrim(config('services.strapi.url'), '/');
+
+        try {
+            $response = Http::timeout(5)->acceptJson()->get("$base/api/plans", [
+                'sort' => 'price:asc',
+                'pagination' => ['pageSize' => 20],
+            ]);
+
+            if ($response->successful()) {
+                return $response->json('data', []);
+            }
+        } catch (\Throwable $e) {
+            Log::warning('Strapi plans request failed: ' . $e->getMessage());
+        }
+
+        return null;
+    }
+
     /**
      * Ipinapadala ang kopya ng user sa Strapi (walang password).
      */

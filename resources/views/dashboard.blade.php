@@ -13,6 +13,7 @@
 <div class="mt-4 space-x-4">
     <a class="text-indigo-600 underline" href="{{ route('appointments.create') }}">Book an Appointment</a>
     <a class="text-indigo-600 underline" href="{{ route('appointments.index') }}">My Appointments</a>
+    <a class="text-indigo-600 underline" href="{{ route('subscriptions.index') }}">My Subscription</a>
 </div>
 
 @if(auth()->user()->isAdmin())
@@ -22,6 +23,7 @@
         <li><a class="text-indigo-600 underline" href="{{ route('customers.index') }}">Customers</a></li>
         <li><a class="text-indigo-600 underline" href="{{ route('services.index') }}">Services</a></li>
         <li><a class="text-indigo-600 underline" href="{{ route('staff.index') }}">Staff</a></li>
+        <li><a class="text-indigo-600 underline" href="{{ route('admin.subscriptions.index') }}">Manage Subscriptions</a></li>
     </ul>
 @endif
         </div>

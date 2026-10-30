@@ -8,6 +8,8 @@ use App\Http\Controllers\StaffController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Admin\AppointmentController as AdminAppointmentController;
+use App\Http\Controllers\Admin\SubscriptionController as AdminSubscriptionController;
+use App\Http\Controllers\SubscriptionController;
 
 // Public home page (content galing sa Strapi)
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -25,6 +27,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
     Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
     Route::patch('/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
+    Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
+    Route::get('/plans/{plan}/subscribe', [SubscriptionController::class, 'create'])->name('subscriptions.create');
+    Route::post('/plans/{plan}/subscribe', [SubscriptionController::class, 'store'])->name('subscriptions.store');
+    Route::patch('/subscriptions/{subscription}/cancel', [SubscriptionController::class, 'cancel'])->name('subscriptions.cancel');
 });
 
 // Para sa admin lang
@@ -43,6 +49,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     Route::patch('/manage/appointments/{appointment}/status', [AdminAppointmentController::class, 'updateStatus'])
         ->name('admin.appointments.status');
+
+        Route::get('/manage/subscriptions', [AdminSubscriptionController::class, 'index'])
+        ->name('admin.subscriptions.index');
 });
 
 require __DIR__ . '/auth.php';
