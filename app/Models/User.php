@@ -34,6 +34,15 @@ class User extends Authenticatable
     {
         return $this->role === 'admin';
     }
+        public function subscriptions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+    public function activeSubscription(): ?Subscription
+    {
+        return $this->subscriptions()->active()->latest('starts_at')->first();
+    }
 
         public function appointments(): \Illuminate\Database\Eloquent\Relations\HasMany
     {

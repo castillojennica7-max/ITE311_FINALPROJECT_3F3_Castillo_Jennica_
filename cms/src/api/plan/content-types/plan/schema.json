@@ -1,0 +1,38 @@
+{
+  "kind": "collectionType",
+  "collectionName": "plans",
+  "info": {
+    "singularName": "plan",
+    "pluralName": "plans",
+    "displayName": "Plan"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "price": {
+      "type": "decimal",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "features": {
+      "type": "text"
+    },
+    "max_staff": {
+      "type": "integer"
+    },
+    "max_monthly_appointments": {
+      "type": "decimal"
+    },
+    "is_featured": {
+      "type": "boolean"
+    }
+  }
+}
