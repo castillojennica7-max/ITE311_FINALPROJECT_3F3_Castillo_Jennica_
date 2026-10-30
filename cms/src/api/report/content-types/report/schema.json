@@ -36,6 +36,12 @@
     },
     "completed_revenue": {
       "type": "decimal"
+    },
+    "active_subscriptions": {
+      "type": "integer"
+    },
+    "monthly_recurring_revenue": {
+      "type": "decimal"
     }
   }
 }

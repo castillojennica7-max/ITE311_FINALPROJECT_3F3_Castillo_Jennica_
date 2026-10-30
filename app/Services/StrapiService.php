@@ -90,6 +90,8 @@ class StrapiService
             'cancelled_count'    => (int) $counts->get('cancelled', 0),
             'total_customers'    => User::where('role', 'customer')->count(),
             'completed_revenue'  => (float) Appointment::where('status', 'completed')->sum('service_price'),
+            'active_subscriptions'      => \App\Models\Subscription::active()->count(),
+            'monthly_recurring_revenue' => (float) \App\Models\Subscription::active()->sum('price'),
         ]);
     }
 

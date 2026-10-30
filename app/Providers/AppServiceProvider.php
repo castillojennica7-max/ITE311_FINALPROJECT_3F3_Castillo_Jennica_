@@ -31,5 +31,9 @@ class AppServiceProvider extends ServiceProvider
         Appointment::saved(function () {
             app(StrapiService::class)->syncDailyReport();
         });
+
+                \App\Models\Subscription::saved(function () {
+            app(StrapiService::class)->syncDailyReport();
+        });
     }
 }
