@@ -33,6 +33,13 @@ class DashboardController extends Controller
             ]);
         }
 
+                if ($user->isSalonOwner()) {
+            return view('dashboard-owner', [
+                'salon'        => $user->salon,
+                'subscription' => $user->activeSubscription(),
+            ]);
+        }
+
         return view('dashboard', [
             'isAdmin' => false,
             'next' => $user->appointments()->with('staff')

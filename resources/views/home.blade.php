@@ -54,12 +54,14 @@
     <div class="hero">
         <h1>{{ $home['hero_title'] ?? 'Welcome to SalonSync' }}</h1>
         <p>{{ $home['hero_subtitle'] ?? '' }}</p>
-                <p style="margin-top: 24px;">
-            <a href="{{ route('appointments.create') }}"
-               style="background: #7b2d5f; color: #fff; padding: 12px 24px; border-radius: 6px; text-decoration: none;">
-                Book an Appointment
-            </a>
-        </p>
+                        @if(! auth()->check() || auth()->user()->isCustomer())
+            <p style="margin-top: 24px;">
+                <a href="{{ route('appointments.create') }}"
+                   style="background: #7b2d5f; color: #fff; padding: 12px 24px; border-radius: 6px; text-decoration: none;">
+                    Book an Appointment
+                </a>
+            </p>
+        @endif
     </div>
 
     <section>

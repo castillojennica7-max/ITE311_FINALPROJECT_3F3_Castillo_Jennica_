@@ -40,15 +40,16 @@
                                 </x-slot>
                             </x-dropdown>
                         </div>
+                    @elseif(auth()->user()->isSalonOwner())
+                        <x-nav-link :href="route('subscriptions.index')" :active="request()->routeIs('subscriptions.*')">
+                            My Subscription
+                        </x-nav-link>
                     @else
                         <x-nav-link :href="route('appointments.create')" :active="request()->routeIs('appointments.create')">
                             Book Appointment
                         </x-nav-link>
                         <x-nav-link :href="route('appointments.index')" :active="request()->routeIs('appointments.index')">
                             My Appointments
-                        </x-nav-link>
-                        <x-nav-link :href="route('subscriptions.index')" :active="request()->routeIs('subscriptions.*')">
-                            My Subscription
                         </x-nav-link>
                     @endif
                 </div>
@@ -106,10 +107,11 @@
                 <x-responsive-nav-link :href="route('customers.index')">Customers</x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('services.index')">Services</x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('staff.index')">Staff</x-responsive-nav-link>
+            @elseif(auth()->user()->isSalonOwner())
+                <x-responsive-nav-link :href="route('subscriptions.index')" :active="request()->routeIs('subscriptions.*')">My Subscription</x-responsive-nav-link>
             @else
                 <x-responsive-nav-link :href="route('appointments.create')" :active="request()->routeIs('appointments.create')">Book Appointment</x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('appointments.index')" :active="request()->routeIs('appointments.index')">My Appointments</x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('subscriptions.index')" :active="request()->routeIs('subscriptions.*')">My Subscription</x-responsive-nav-link>
             @endif
         </div>
 

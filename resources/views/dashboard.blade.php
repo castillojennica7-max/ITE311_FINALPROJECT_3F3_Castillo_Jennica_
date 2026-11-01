@@ -68,34 +68,18 @@
 
             @else
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {{-- Susunod na appointment --}}
-                    <div class="bg-white rounded-xl shadow-sm border-l-4 border-[#7b2d5f] p-5">
-                        <p class="text-sm text-gray-500">Next appointment</p>
-                        @if($next)
-                            <p class="text-xl font-bold text-gray-900">{{ $next->service_name }}</p>
-                            <p class="text-gray-700">{{ $next->appointment_at->format('M d, Y h:i A') }}</p>
-                            <p class="text-sm text-gray-500">
-                                Stylist: {{ $next->staff?->name ?? 'Any available' }} &middot;
-                                <span class="capitalize">{{ $next->status }}</span>
-                            </p>
-                        @else
-                            <p class="text-gray-700 mt-1">You have no upcoming appointments.</p>
-                        @endif
-                    </div>
-
-                    {{-- Subscription --}}
-                    <div class="bg-white rounded-xl shadow-sm border-l-4 border-[#7b2d5f] p-5">
-                        <p class="text-sm text-gray-500">Subscription</p>
-                        @if($subscription)
-                            <p class="text-xl font-bold text-gray-900">{{ $subscription->plan_name }}</p>
-                            <p class="text-gray-700">{{ $subscription->salon_name }}</p>
-                            <p class="text-sm text-gray-500">Valid until {{ $subscription->ends_at->format('M d, Y') }}</p>
-                        @else
-                            <p class="text-gray-700 mt-1">No active subscription.</p>
-                            <a class="text-[#7b2d5f] underline text-sm" href="{{ route('home') }}#pricing">View plans</a>
-                        @endif
-                    </div>
+                                <div class="bg-white rounded-xl shadow-sm border-l-4 border-[#7b2d5f] p-5">
+                    <p class="text-sm text-gray-500">Next appointment</p>
+                    @if($next)
+                        <p class="text-xl font-bold text-gray-900">{{ $next->service_name }}</p>
+                        <p class="text-gray-700">{{ $next->appointment_at->format('M d, Y h:i A') }}</p>
+                        <p class="text-sm text-gray-500">
+                            Stylist: {{ $next->staff?->name ?? 'Any available' }} &middot;
+                            <span class="capitalize">{{ $next->status }}</span>
+                        </p>
+                    @else
+                        <p class="text-gray-700 mt-1">You have no upcoming appointments.</p>
+                    @endif
                 </div>
 
                 {{-- Kamakailang appointments --}}
