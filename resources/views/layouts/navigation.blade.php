@@ -41,8 +41,17 @@
                             </x-dropdown>
                         </div>
                     @elseif(auth()->user()->isSalonOwner())
+                        <x-nav-link :href="route('owner.appointments.index')" :active="request()->routeIs('owner.appointments.*')">
+                            Appointments
+                        </x-nav-link>
+                        <x-nav-link :href="route('owner.staff.index')" :active="request()->routeIs('owner.staff.*')">
+                            Staff
+                        </x-nav-link>
+                        <x-nav-link :href="route('owner.customers.index')" :active="request()->routeIs('owner.customers.*')">
+                            Customers
+                        </x-nav-link>
                         <x-nav-link :href="route('subscriptions.index')" :active="request()->routeIs('subscriptions.*')">
-                            My Subscription
+                            Subscription
                         </x-nav-link>
                     @else
                         <x-nav-link :href="route('appointments.create')" :active="request()->routeIs('appointments.create')">
@@ -70,7 +79,10 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">Profile</x-dropdown-link>
+                                                <x-dropdown-link :href="route('profile.edit')">Profile</x-dropdown-link>
+                        @if(auth()->user()->isSalonOwner() && auth()->user()->salon)
+                            <x-dropdown-link :href="route('owner.settings.edit')">Salon Settings</x-dropdown-link>
+                        @endif
 
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
@@ -108,7 +120,10 @@
                 <x-responsive-nav-link :href="route('services.index')">Services</x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('staff.index')">Staff</x-responsive-nav-link>
             @elseif(auth()->user()->isSalonOwner())
-                <x-responsive-nav-link :href="route('subscriptions.index')" :active="request()->routeIs('subscriptions.*')">My Subscription</x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('owner.appointments.index')" :active="request()->routeIs('owner.appointments.*')">Appointments</x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('owner.staff.index')" :active="request()->routeIs('owner.staff.*')">Staff</x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('owner.customers.index')" :active="request()->routeIs('owner.customers.*')">Customers</x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('subscriptions.index')" :active="request()->routeIs('subscriptions.*')">Subscription</x-responsive-nav-link>
             @else
                 <x-responsive-nav-link :href="route('appointments.create')" :active="request()->routeIs('appointments.create')">Book Appointment</x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('appointments.index')" :active="request()->routeIs('appointments.index')">My Appointments</x-responsive-nav-link>

@@ -13,6 +13,7 @@ class DashboardController extends Controller
     {
         $user = $request->user();
 
+        // Platform admin
         if ($user->isAdmin()) {
             return view('dashboard', [
                 'isAdmin' => true,
@@ -33,13 +34,43 @@ class DashboardController extends Controller
             ]);
         }
 
-                if ($user->isSalonOwner()) {
-            return view('dashboard-owner', [
-                'salon'        => $user->salon,
-                'subscription' => $user->activeSubscription(),
-            ]);
+        // Salon owner
+        if ($user->isSalonOwner()) {
+            $salon        = $user->salon;
+            $subscription = $user->activeSubscription();
+            $stats        = null;
+            $upcoming     = collect();
+
+            if ($salon && $subscription) {
+                $stats = [
+                    'today'     => $salon->appointments()
+                        ->whereDate('appointment_at', today())
+                        ->whereIn('status', ['pending', 'confirmed'])
+                        ->count(),
+                    'pending'   => $salon->appointments()->where('status', 'pending')->count(),
+                    'staff'     => $salon->staff()->count(),
+                    'customers' => $salon->appointments()->distinct()->count('user_id'),
+                    // Pansamantala: kita mula sa completed na appointments (papalitan ng Transactions sa Part 4)
+                    'revenue'   => (float) $salon->appointments()
+                        ->where('status', 'completed')
+                        ->whereMonth('appointment_at', now()->month)
+                        ->whereYear('appointment_at', now()->year)
+                        ->sum('service_price'),
+                ];
+
+                $upcoming = $salon->appointments()
+                    ->with(['user', 'staff'])
+                    ->whereIn('status', ['pending', 'confirmed'])
+                    ->where('appointment_at', '>=', now())
+                    ->orderBy('appointment_at')
+                    ->limit(5)
+                    ->get();
+            }
+
+            return view('dashboard-owner', compact('salon', 'subscription', 'stats', 'upcoming'));
         }
 
+        // Customer
         return view('dashboard', [
             'isAdmin' => false,
             'next' => $user->appointments()->with('staff')
@@ -47,8 +78,7 @@ class DashboardController extends Controller
                 ->where('appointment_at', '>=', now())
                 ->orderBy('appointment_at')
                 ->first(),
-            'recent'       => $user->appointments()->latest('appointment_at')->limit(5)->get(),
-            'subscription' => $user->activeSubscription(),
+            'recent' => $user->appointments()->latest('appointment_at')->limit(5)->get(),
         ]);
     }
 }

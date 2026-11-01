@@ -11,6 +11,10 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Owner\AppointmentController as OwnerAppointmentController;
+use App\Http\Controllers\Owner\CustomerController as OwnerCustomerController;
+use App\Http\Controllers\Owner\SalonController as OwnerSalonController;
+use App\Http\Controllers\Owner\StaffController as OwnerStaffController;
 
 // Public home page (content galing sa Strapi)
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -63,4 +67,23 @@ Route::middleware(['auth', 'admin'])->group(function () {
         ->name('admin.subscriptions.index');
 });
 
+// Para sa salon owner na may aktibong subscription
+Route::middleware(['auth', 'role:salon_owner', 'subscribed'])
+    ->prefix('salon')
+    ->name('owner.')
+    ->group(function () {
+        Route::get('/appointments', [OwnerAppointmentController::class, 'index'])->name('appointments.index');
+        Route::patch('/appointments/{appointment}/status', [OwnerAppointmentController::class, 'updateStatus'])->name('appointments.status');
+
+        Route::get('/staff', [OwnerStaffController::class, 'index'])->name('staff.index');
+        Route::get('/staff/create', [OwnerStaffController::class, 'create'])->name('staff.create');
+        Route::post('/staff', [OwnerStaffController::class, 'store'])->name('staff.store');
+        Route::delete('/staff/{staff}', [OwnerStaffController::class, 'destroy'])->name('staff.destroy');
+
+        Route::get('/customers', [OwnerCustomerController::class, 'index'])->name('customers.index');
+
+        Route::get('/settings', [OwnerSalonController::class, 'edit'])->name('settings.edit');
+        Route::patch('/settings', [OwnerSalonController::class, 'update'])->name('settings.update');
+    });
+    
 require __DIR__ . '/auth.php';
