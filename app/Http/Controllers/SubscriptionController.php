@@ -35,10 +35,12 @@ class SubscriptionController extends Controller
         return view('subscriptions.create', ['plan' => $selected]);
     }
 
-    // I-save ang subscription (demo payment)
+    // I-save ang subscription (demo payment) at likhain ang salon
     public function store(Request $request, StrapiService $strapi, string $plan)
     {
-        if ($request->user()->activeSubscription()) {
+        $user = $request->user();
+
+        if ($user->activeSubscription()) {
             return redirect()->route('subscriptions.index')
                 ->with('error', 'You already have an active subscription.');
         }
@@ -52,19 +54,25 @@ class SubscriptionController extends Controller
 
         abort_unless($selected, 404, 'Plan not found, or the plan list is unavailable.');
 
-        $subscription = $request->user()->subscriptions()->create([
-            'plan_document_id' => $selected['documentId'],
-            'plan_name'        => $selected['name'],
-            'price'            => $selected['price'],
-            'salon_name'       => $data['salon_name'],
-            'status'           => 'active',
-            'reference_no'     => 'SS-' . strtoupper(Str::random(8)),
-            'starts_at'        => now(),
-            'ends_at'          => now()->addMonth(),
+        // Isang salon lang ang bawat may-ari. Gagawa kung wala pa, at ia-update ang pangalan kung meron na.
+        $salon = $user->salon()->updateOrCreate([], ['name' => $data['salon_name']]);
+
+        $subscription = $salon->subscriptions()->create([
+            'user_id'                  => $user->id,
+            'plan_document_id'         => $selected['documentId'],
+            'plan_name'                => $selected['name'],
+            'price'                    => $selected['price'],
+            'max_staff'                => $selected['max_staff'] ?? null,
+            'max_monthly_appointments' => $selected['max_monthly_appointments'] ?? null,
+            'salon_name'               => $salon->name,
+            'status'                   => 'active',
+            'reference_no'             => 'SS-' . strtoupper(Str::random(8)),
+            'starts_at'                => now(),
+            'ends_at'                  => now()->addMonth(),
         ]);
 
         try {
-            $request->user()->notify(new SubscriptionActivated($subscription));
+            $user->notify(new SubscriptionActivated($subscription));
         } catch (\Throwable $e) {
             Log::warning('Failed to send subscription email: ' . $e->getMessage());
         }

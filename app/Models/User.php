@@ -39,6 +39,21 @@ class User extends Authenticatable
         return $this->hasMany(Subscription::class);
     }
 
+        public function salon(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Salon::class, 'owner_id');
+    }
+
+    public function isSalonOwner(): bool
+    {
+        return $this->role === 'salon_owner';
+    }
+
+    public function isCustomer(): bool
+    {
+        return $this->role === 'customer';
+    }
+
     public function activeSubscription(): ?Subscription
     {
         return $this->subscriptions()->active()->latest('starts_at')->first();

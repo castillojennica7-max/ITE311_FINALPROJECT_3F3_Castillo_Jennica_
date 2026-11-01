@@ -22,7 +22,7 @@
 
                     <x-input-label for="salon_name" value="Salon name" />
                     <x-text-input id="salon_name" name="salon_name" type="text"
-                                  class="block mt-1 w-full" :value="old('salon_name')" required autofocus />
+                                  class="block mt-1 w-full" :value="old('salon_name', auth()->user()->salon?->name)" required autofocus />
                     <x-input-error :messages="$errors->get('salon_name')" class="mt-2" />
 
                     <div class="mt-6">

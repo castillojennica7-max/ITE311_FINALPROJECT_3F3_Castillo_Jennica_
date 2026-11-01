@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Appointment extends Model
 {
     protected $fillable = [
+        'salon_id',
         'user_id',
         'staff_id',
         'service_document_id',
@@ -23,6 +24,11 @@ class Appointment extends Model
         'appointment_at' => 'datetime',
         'service_price'  => 'decimal:2',
     ];
+
+    public function salon(): BelongsTo
+    {
+        return $this->belongsTo(Salon::class);
+    }
 
     public function user(): BelongsTo
     {

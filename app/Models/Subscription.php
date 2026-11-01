@@ -9,10 +9,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Subscription extends Model
 {
     protected $fillable = [
+        'salon_id',
         'user_id',
         'plan_document_id',
         'plan_name',
         'price',
+        'max_staff',
+        'max_monthly_appointments',
         'salon_name',
         'status',
         'reference_no',
@@ -31,6 +34,11 @@ class Subscription extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function salon(): BelongsTo
+    {
+        return $this->belongsTo(Salon::class);
     }
 
     public function isActive(): bool

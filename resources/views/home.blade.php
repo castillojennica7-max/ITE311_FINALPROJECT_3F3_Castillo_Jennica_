@@ -109,10 +109,21 @@
                             <li>{{ $feature }}</li>
                         @endforeach
                     </ul>
-                    <a href="{{ route('subscriptions.create', $plan['documentId']) }}"
-                       style="display: inline-block; background: #7b2d5f; color: #fff; padding: 10px 20px; border-radius: 6px; text-decoration: none;">
-                        Subscribe
-                    </a>
+                                        @guest
+                        <a href="{{ route('register', ['type' => 'salon_owner']) }}"
+                           style="display: inline-block; background: #7b2d5f; color: #fff; padding: 10px 20px; border-radius: 6px; text-decoration: none;">
+                            Get started
+                        </a>
+                    @else
+                        @if(auth()->user()->isSalonOwner())
+                            <a href="{{ route('subscriptions.create', $plan['documentId']) }}"
+                               style="display: inline-block; background: #7b2d5f; color: #fff; padding: 10px 20px; border-radius: 6px; text-decoration: none;">
+                                Subscribe
+                            </a>
+                        @else
+                            <small style="color: #888;">Plans are for salon owners.</small>
+                        @endif
+                    @endguest
                 </div>
             @empty
                 <p>No plans available.</p>
