@@ -10,14 +10,15 @@ use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Admin\AppointmentController as AdminAppointmentController;
 use App\Http\Controllers\Admin\SubscriptionController as AdminSubscriptionController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\DashboardController;
 
 // Public home page (content galing sa Strapi)
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Para sa lahat ng naka-login na user
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

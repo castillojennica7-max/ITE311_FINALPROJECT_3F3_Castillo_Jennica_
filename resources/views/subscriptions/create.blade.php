@@ -5,6 +5,7 @@
 
     <div class="py-12">
         <div class="max-w-xl mx-auto sm:px-6 lg:px-8">
+            <div class="mb-4"><x-back-link /></div>
             <div class="bg-white shadow-sm sm:rounded-lg p-6">
                 <p class="text-2xl font-bold">
                     ₱{{ number_format($plan['price'], 2) }}

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SalonSync</title>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <style>
         body { font-family: Arial, sans-serif; margin: 0; color: #333; background: #fafafa; }
         header { background: #7b2d5f; color: #fff; padding: 16px 32px; font-size: 22px; font-weight: bold; }
@@ -18,17 +19,30 @@
         .price { color: #7b2d5f; font-weight: bold; }
         .warning { background: #fff3cd; padding: 12px 24px; text-align: center; }
         footer { text-align: center; padding: 24px; color: #888; }
+        .btn-light { background: #fff; color: #7b2d5f; padding: 9px 22px; border-radius: 999px; text-decoration: none; font-weight: bold; font-size: 16px; }
+        .btn-light:hover { background: #f3e3ee; }
+        .btn-outline { background: transparent; color: #fff; border: 2px solid #fff; padding: 7px 22px; border-radius: 999px; text-decoration: none; font-weight: bold; font-size: 16px; font-family: inherit; cursor: pointer; }
+        .btn-outline:hover { background: #fff; color: #7b2d5f; }
     </style>
 </head>
 <body>
-        <header style="display: flex; justify-content: space-between; align-items: center;">
-        <span>SalonSync</span>
-        <nav style="font-size: 16px; font-weight: normal;">
+            <header style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <a href="{{ route('home') }}" style="display: flex; align-items: center; gap: 10px; color: #fff; text-decoration: none;">
+            <x-application-logo style="height: 40px; width: 40px;" />
+            <span>SalonSync</span>
+        </a>
+
+        <nav style="display: flex; align-items: center; gap: 12px; font-size: 16px; font-weight: bold;">
+            <a href="#pricing" style="color: #fff; text-decoration: none; margin-right: 8px;">Pricing</a>
             @auth
-                <a href="{{ route('dashboard') }}" style="color: #fff; margin-left: 16px;">Dashboard</a>
+                <a href="{{ route('dashboard') }}" class="btn-light">Dashboard</a>
+                <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+                    @csrf
+                    <button type="submit" class="btn-outline">Log out</button>
+                </form>
             @else
-                <a href="{{ route('login') }}" style="color: #fff; margin-left: 16px;">Log in</a>
-                <a href="{{ route('register') }}" style="color: #fff; margin-left: 16px;">Sign up</a>
+                <a href="{{ route('login') }}" class="btn-outline">Log in</a>
+                <a href="{{ route('register') }}" class="btn-light">Sign up</a>
             @endauth
         </nav>
     </header>
