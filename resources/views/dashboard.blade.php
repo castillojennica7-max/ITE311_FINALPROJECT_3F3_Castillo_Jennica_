@@ -21,7 +21,7 @@
                         ['Customers', $stats['customers']],
                         ['Total appointments', $stats['appointments']],
                         ['Pending appointments', $stats['pending']],
-                        ['Completed revenue', '₱' . number_format($stats['revenue'], 2)],
+                        ['Active salons', $stats['salons']],
                         ['Active subscriptions', $stats['subscriptions']],
                         ['Monthly recurring revenue', '₱' . number_format($stats['mrr'], 2)],
                     ];

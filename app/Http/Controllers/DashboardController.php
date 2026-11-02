@@ -6,6 +6,7 @@ use App\Models\Appointment;
 use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\Salon;
 
 class DashboardController extends Controller
 {
@@ -24,6 +25,7 @@ class DashboardController extends Controller
                     'revenue'       => (float) Appointment::where('status', 'completed')->sum('service_price'),
                     'subscriptions' => Subscription::active()->count(),
                     'mrr'           => (float) Subscription::active()->sum('price'),
+                    'salons'        => Salon::active()->count(),
                 ],
                 'upcoming' => Appointment::with(['user', 'staff'])
                     ->whereIn('status', ['pending', 'confirmed'])

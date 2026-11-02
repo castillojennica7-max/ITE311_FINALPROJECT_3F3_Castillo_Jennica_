@@ -4,67 +4,29 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
             <div class="mb-4"><x-back-link /></div>
-            <div class="bg-white shadow-sm sm:rounded-lg p-6">
 
-                @unless($cmsOnline)
-                    <p class="mb-4 text-red-600">The service list is currently unavailable. Please try again later.</p>
-                @endunless
+            <p class="mb-4 text-gray-600">Step 1 of 2: choose a salon.</p>
 
-                <form method="POST" action="{{ route('appointments.store') }}">
-                    @csrf
-
-                    <div>
-                        <x-input-label for="service_document_id" value="Service" />
-                        <select id="service_document_id" name="service_document_id" required
-                                class="block mt-1 w-full border-gray-300 rounded-md shadow-sm">
-                            <option value="">Select a service</option>
-                            @foreach($services as $service)
-                                <option value="{{ $service['documentId'] }}"
-                                    @selected(old('service_document_id') === $service['documentId'])>
-                                    {{ $service['name'] }} - ₱{{ number_format($service['price'], 2) }}
-                                    ({{ $service['duration_minutes'] }} min)
-                                </option>
-                            @endforeach
-                        </select>
-                        <x-input-error :messages="$errors->get('service_document_id')" class="mt-2" />
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                @forelse($salons as $salon)
+                    <div class="bg-white rounded-xl shadow-sm border-l-4 border-[#7b2d5f] p-5">
+                        <p class="text-xl font-bold text-gray-900">{{ $salon->name }}</p>
+                        @if($salon->address)
+                            <p class="text-gray-600">{{ $salon->address }}</p>
+                        @endif
+                        @if($salon->phone)
+                            <p class="text-sm text-gray-500">{{ $salon->phone }}</p>
+                        @endif
+                        <a href="{{ route('appointments.book', $salon) }}"
+                           class="inline-flex items-center mt-3 px-4 py-2 bg-[#7b2d5f] rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-[#5f2249] transition">
+                            Book here
+                        </a>
                     </div>
-
-                    <div class="mt-4">
-                        <x-input-label for="staff_id" value="Stylist" />
-                        <select id="staff_id" name="staff_id"
-                                class="block mt-1 w-full border-gray-300 rounded-md shadow-sm">
-                            <option value="">Any available stylist</option>
-                            @foreach($staff as $member)
-                                <option value="{{ $member->id }}" @selected(old('staff_id') == $member->id)>
-                                    {{ $member->name }} ({{ $member->role }})
-                                </option>
-                            @endforeach
-                        </select>
-                        <x-input-error :messages="$errors->get('staff_id')" class="mt-2" />
-                    </div>
-
-                    <div class="mt-4">
-                        <x-input-label for="appointment_at" value="Date and Time" />
-                        <input id="appointment_at" type="datetime-local" name="appointment_at" required
-                               min="{{ now()->format('Y-m-d\TH:i') }}"
-                               value="{{ old('appointment_at') }}"
-                               class="block mt-1 w-full border-gray-300 rounded-md shadow-sm">
-                        <x-input-error :messages="$errors->get('appointment_at')" class="mt-2" />
-                    </div>
-
-                    <div class="mt-4">
-                        <x-input-label for="notes" value="Notes (optional)" />
-                        <textarea id="notes" name="notes" rows="3"
-                                  class="block mt-1 w-full border-gray-300 rounded-md shadow-sm">{{ old('notes') }}</textarea>
-                        <x-input-error :messages="$errors->get('notes')" class="mt-2" />
-                    </div>
-
-                    <div class="mt-6">
-                        <x-primary-button>Book Appointment</x-primary-button>
-                    </div>
-                </form>
+                @empty
+                    <p class="text-gray-500">No salons are accepting bookings yet. Please check back soon.</p>
+                @endforelse
             </div>
         </div>
     </div>

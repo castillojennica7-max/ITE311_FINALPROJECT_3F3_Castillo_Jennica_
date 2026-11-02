@@ -18,7 +18,7 @@
 
                     @if(auth()->user()->isAdmin())
                         @php
-                            $manageActive = request()->routeIs('admin.*', 'customers.*', 'services.*', 'staff.*');
+                            $manageActive = request()->routeIs('admin.*');
                         @endphp
                         <div class="flex items-center">
                             <x-dropdown align="left" width="48">
@@ -32,11 +32,11 @@
                                     </button>
                                 </x-slot>
                                 <x-slot name="content">
+                                    <x-dropdown-link :href="route('admin.salons.index')">Salons</x-dropdown-link>
+                                    <x-dropdown-link :href="route('admin.users.index')">Users</x-dropdown-link>
                                     <x-dropdown-link :href="route('admin.appointments.index')">Appointments</x-dropdown-link>
                                     <x-dropdown-link :href="route('admin.subscriptions.index')">Subscriptions</x-dropdown-link>
-                                    <x-dropdown-link :href="route('customers.index')">Customers</x-dropdown-link>
-                                    <x-dropdown-link :href="route('services.index')">Services</x-dropdown-link>
-                                    <x-dropdown-link :href="route('staff.index')">Staff</x-dropdown-link>
+                                    <x-dropdown-link :href="config('services.strapi.url') . '/admin'" target="_blank">Content (CMS)</x-dropdown-link>
                                 </x-slot>
                             </x-dropdown>
                         </div>
@@ -113,12 +113,11 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">Dashboard</x-responsive-nav-link>
 
             @if(auth()->user()->isAdmin())
-                <div class="px-4 pt-3 text-xs font-semibold text-gray-400 uppercase">Manage</div>
+                <x-responsive-nav-link :href="route('admin.salons.index')">Salons</x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.users.index')">Users</x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('admin.appointments.index')">Appointments</x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('admin.subscriptions.index')">Subscriptions</x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('customers.index')">Customers</x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('services.index')">Services</x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('staff.index')">Staff</x-responsive-nav-link>
+                <x-responsive-nav-link :href="config('services.strapi.url') . '/admin'" target="_blank">Content (CMS)</x-responsive-nav-link>
             @elseif(auth()->user()->isSalonOwner())
                 <x-responsive-nav-link :href="route('owner.appointments.index')" :active="request()->routeIs('owner.appointments.*')">Appointments</x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('owner.staff.index')" :active="request()->routeIs('owner.staff.*')">Staff</x-responsive-nav-link>

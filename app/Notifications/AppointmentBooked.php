@@ -25,6 +25,7 @@ class AppointmentBooked extends Notification
             ->subject('Your SalonSync appointment request')
             ->greeting("Hello {$notifiable->name},")
             ->line('Thank you for booking with SalonSync. Here are your appointment details:')
+            ->line("Salon: {$a->salon->name}")
             ->line("Service: {$a->service_name}")
             ->line('Date and time: ' . $a->appointment_at->format('M d, Y h:i A'))
             ->line('Stylist: ' . ($a->staff?->name ?? 'Any available'))

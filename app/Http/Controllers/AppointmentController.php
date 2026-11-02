@@ -3,45 +3,60 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
-use App\Models\Staff;
+use App\Models\Salon;
+use App\Notifications\AppointmentBooked;
 use App\Services\StrapiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use App\Notifications\AppointmentBooked;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class AppointmentController extends Controller
 {
-    // Listahan ng appointments ng naka-login na user
+    // Listahan ng appointments ng naka-login na customer
     public function index(Request $request)
     {
         $appointments = $request->user()
             ->appointments()
-            ->with('staff')
+            ->with(['staff', 'salon'])
             ->latest('appointment_at')
             ->get();
 
         return view('appointments.index', compact('appointments'));
     }
 
-    // Booking form
-    public function create(StrapiService $strapi)
+    // Hakbang 1: pumili ng salon (mga salon na may aktibong subscription lang)
+    public function create()
     {
+        return view('appointments.create', [
+            'salons' => Salon::active()->orderBy('name')->get(),
+        ]);
+    }
+
+    // Hakbang 2: booking form para sa napiling salon
+    public function book(StrapiService $strapi, Salon $salon)
+    {
+        abort_unless($salon->isActive(), 404);
+
         $services = $strapi->services();
 
-        return view('appointments.create', [
+        return view('appointments.book', [
+            'salon'     => $salon,
             'services'  => $services ?? [],
             'cmsOnline' => $services !== null,
-            'staff'     => Staff::orderBy('name')->get(),
+            'staff'     => $salon->staff()->orderBy('name')->get(),
         ]);
     }
 
     // I-save ang booking
-    public function store(Request $request, StrapiService $strapi)
+    public function store(Request $request, StrapiService $strapi, Salon $salon)
     {
+        abort_unless($salon->isActive(), 404);
+
         $data = $request->validate([
             'service_document_id' => 'required|string',
-            'staff_id'            => 'nullable|exists:staff,id',
+            // Staff ng napiling salon lang ang puwede
+            'staff_id'            => ['nullable', Rule::exists('staff', 'id')->where('salon_id', $salon->id)],
             'appointment_at'      => 'required|date|after:now',
             'notes'               => 'nullable|string|max:500',
         ]);
@@ -65,6 +80,23 @@ class AppointmentController extends Controller
 
         $when = Carbon::parse($data['appointment_at']);
 
+        // Limit ng plan ng salon: bilang ng appointments kada buwan
+        $limit = $salon->subscriptions()->active()->latest('starts_at')->first()?->max_monthly_appointments;
+
+        if ($limit !== null) {
+            $count = $salon->appointments()
+                ->where('status', '!=', 'cancelled')
+                ->whereYear('appointment_at', $when->year)
+                ->whereMonth('appointment_at', $when->month)
+                ->count();
+
+            if ($count >= $limit) {
+                return back()->withInput()->withErrors([
+                    'appointment_at' => 'This salon is fully booked for that month. Please choose another month or salon.',
+                ]);
+            }
+        }
+
         // Iwasan ang double booking ng parehong staff sa parehong oras
         if (! empty($data['staff_id'])) {
             $taken = Appointment::where('staff_id', $data['staff_id'])
@@ -79,7 +111,8 @@ class AppointmentController extends Controller
             }
         }
 
-               $appointment = $request->user()->appointments()->create([
+        $appointment = $salon->appointments()->create([
+            'user_id'                  => $request->user()->id,
             'staff_id'                 => $data['staff_id'] ?? null,
             'service_document_id'      => $service['documentId'],
             'service_name'             => $service['name'],
@@ -97,7 +130,7 @@ class AppointmentController extends Controller
         }
 
         return redirect()->route('appointments.index')
-            ->with('success', 'Your appointment has been booked! A confirmation email was sent.');
+            ->with('success', "Your appointment at {$salon->name} has been booked! A confirmation email was sent.");
     }
 
     // I-cancel ang sariling appointment

@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
-use Illuminate\Http\Request;
 use App\Notifications\AppointmentStatusChanged;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class AppointmentController extends Controller
@@ -16,7 +16,7 @@ class AppointmentController extends Controller
     {
         $status = $request->query('status');
 
-        $appointments = Appointment::with(['user', 'staff'])
+        $appointments = Appointment::with(['user', 'staff', 'salon'])
             ->when(in_array($status, self::STATUSES), fn ($q) => $q->where('status', $status))
             ->latest('appointment_at')
             ->paginate(15)
@@ -35,9 +35,8 @@ class AppointmentController extends Controller
             'status' => 'required|in:' . implode(',', self::STATUSES),
         ]);
 
-                $appointment->update($data);
+        $appointment->update($data);
 
-        // Magpapadala lang ng email kung talagang nagbago ang status
         if ($appointment->wasChanged('status')) {
             try {
                 $appointment->user->notify(new AppointmentStatusChanged($appointment));

@@ -4,7 +4,7 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
             <div class="mb-4"><x-back-link /></div>
 
             @if(session('success'))
@@ -13,7 +13,7 @@
 
             <div class="mb-4">
                 <a href="{{ route('appointments.create') }}"
-                   class="inline-flex items-center px-4 py-2 bg-gray-800 rounded-md font-semibold text-xs text-white uppercase tracking-widest">
+                   class="inline-flex items-center px-4 py-2 bg-[#7b2d5f] rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-[#5f2249] transition">
                     + Book an Appointment
                 </a>
             </div>
@@ -22,6 +22,7 @@
                 <table class="min-w-full text-sm text-left">
                     <thead class="bg-gray-50 text-gray-600">
                         <tr>
+                            <th class="px-4 py-3">Salon</th>
                             <th class="px-4 py-3">Service</th>
                             <th class="px-4 py-3">Stylist</th>
                             <th class="px-4 py-3">Date and Time</th>
@@ -33,6 +34,7 @@
                     <tbody>
                         @forelse($appointments as $appointment)
                             <tr class="border-t">
+                                <td class="px-4 py-3">{{ $appointment->salon->name }}</td>
                                 <td class="px-4 py-3">{{ $appointment->service_name }}</td>
                                 <td class="px-4 py-3">{{ $appointment->staff?->name ?? 'Any available' }}</td>
                                 <td class="px-4 py-3">{{ $appointment->appointment_at->format('M d, Y h:i A') }}</td>
@@ -51,7 +53,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-4 py-6 text-center text-gray-500">
+                                <td colspan="7" class="px-4 py-6 text-center text-gray-500">
                                     You have no appointments yet.
                                 </td>
                             </tr>

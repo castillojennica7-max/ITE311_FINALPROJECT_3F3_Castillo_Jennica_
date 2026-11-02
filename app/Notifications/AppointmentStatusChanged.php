@@ -32,6 +32,7 @@ class AppointmentStatusChanged extends Notification
             ->subject('SalonSync appointment update: ' . ucfirst($a->status))
             ->greeting("Hello {$notifiable->name},")
             ->line($message)
+            ->line("Salon: {$a->salon->name}")
             ->line("Service: {$a->service_name}")
             ->line('Date and time: ' . $a->appointment_at->format('M d, Y h:i A'))
             ->line('Status: ' . ucfirst($a->status))
