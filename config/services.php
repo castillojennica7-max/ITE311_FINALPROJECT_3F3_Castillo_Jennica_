@@ -28,4 +28,12 @@ return [
         ],
     ],
 
+        'paypal' => [
+        'client_id'   => env('PAYPAL_CLIENT_ID'),
+        'secret'      => env('PAYPAL_SECRET'),
+        'mode'        => env('PAYPAL_MODE', 'sandbox'),
+        'currency'    => env('PAYPAL_CURRENCY', 'PHP'),
+        'php_per_usd' => env('PAYPAL_PHP_PER_USD', 56),
+    ],
+
 ];

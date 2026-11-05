@@ -41,4 +41,9 @@ class Salon extends Model
     {
         return $query->whereHas('subscriptions', fn ($s) => $s->active());
     }
+
+        public function transactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class);
+    }
 }

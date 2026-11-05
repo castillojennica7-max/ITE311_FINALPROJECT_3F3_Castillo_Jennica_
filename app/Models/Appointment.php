@@ -39,4 +39,9 @@ class Appointment extends Model
     {
         return $this->belongsTo(Staff::class);
     }
+
+        public function transaction(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Transaction::class);
+    }
 }

@@ -10,6 +10,11 @@
             @if(session('success'))
                 <div class="mb-4 p-3 bg-green-100 text-green-800 rounded">{{ session('success') }}</div>
             @endif
+            @if(session('error'))
+                <div class="mb-4 p-3 bg-red-100 text-red-800 rounded">{{ session('error') }}</div>
+            @endif
+
+            @php $paypalEnabled = app(\App\Services\PayPalService::class)->enabled(); @endphp
 
             <div class="mb-4">
                 <a href="{{ route('appointments.create') }}"
@@ -28,6 +33,7 @@
                             <th class="px-4 py-3">Date and Time</th>
                             <th class="px-4 py-3">Price</th>
                             <th class="px-4 py-3">Status</th>
+                            <th class="px-4 py-3">Payment</th>
                             <th class="px-4 py-3"></th>
                         </tr>
                     </thead>
@@ -41,7 +47,26 @@
                                 <td class="px-4 py-3">₱{{ number_format($appointment->service_price, 2) }}</td>
                                 <td class="px-4 py-3 capitalize">{{ $appointment->status }}</td>
                                 <td class="px-4 py-3">
-                                    @if(in_array($appointment->status, ['pending', 'confirmed']))
+                                    @if($appointment->transaction)
+                                        <a class="text-green-700 underline" href="{{ route('transactions.receipt', $appointment->transaction) }}">
+                                            Paid &middot; Receipt
+                                        </a>
+                                    @elseif($appointment->status === 'cancelled')
+                                        <span class="text-gray-400">-</span>
+                                    @elseif($paypalEnabled)
+                                        <form method="POST" action="{{ route('payments.checkout', $appointment) }}">
+                                            @csrf
+                                            <button type="submit"
+                                                    class="px-3 py-1 bg-[#7b2d5f] text-white rounded text-xs font-semibold hover:bg-[#5f2249]">
+                                                Pay with PayPal
+                                            </button>
+                                        </form>
+                                    @else
+                                        <span class="text-gray-500">Pay at the salon</span>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3">
+                                    @if(in_array($appointment->status, ['pending', 'confirmed']) && ! $appointment->transaction)
                                         <form method="POST" action="{{ route('appointments.cancel', $appointment) }}">
                                             @csrf
                                             @method('PATCH')
@@ -53,7 +78,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="px-4 py-6 text-center text-gray-500">
+                                <td colspan="8" class="px-4 py-6 text-center text-gray-500">
                                     You have no appointments yet.
                                 </td>
                             </tr>

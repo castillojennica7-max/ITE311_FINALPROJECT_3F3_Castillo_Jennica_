@@ -10,6 +10,9 @@
             @if(session('success'))
                 <div class="mb-4 p-3 bg-green-100 text-green-800 rounded">{{ session('success') }}</div>
             @endif
+            @if(session('error'))
+                <div class="mb-4 p-3 bg-red-100 text-red-800 rounded">{{ session('error') }}</div>
+            @endif
 
             <div class="mb-4 flex flex-wrap gap-2 text-sm">
                 <a href="{{ route('owner.appointments.index') }}"
@@ -34,6 +37,7 @@
                             <th class="px-4 py-3">Date and Time</th>
                             <th class="px-4 py-3">Price</th>
                             <th class="px-4 py-3">Status</th>
+                            <th class="px-4 py-3">Payment</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -59,10 +63,23 @@
                                         </select>
                                     </form>
                                 </td>
+                                <td class="px-4 py-3">
+                                    @if($appointment->transaction)
+                                        <a class="text-green-700 underline" href="{{ route('transactions.receipt', $appointment->transaction) }}">
+                                            Paid &middot; Receipt
+                                        </a>
+                                    @elseif($appointment->status !== 'cancelled')
+                                        <a class="text-[#7b2d5f] underline" href="{{ route('owner.transactions.create', $appointment) }}">
+                                            Record payment
+                                        </a>
+                                    @else
+                                        <span class="text-gray-400">-</span>
+                                    @endif
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-4 py-6 text-center text-gray-500">No appointments found.</td>
+                                <td colspan="7" class="px-4 py-6 text-center text-gray-500">No appointments found.</td>
                             </tr>
                         @endforelse
                     </tbody>

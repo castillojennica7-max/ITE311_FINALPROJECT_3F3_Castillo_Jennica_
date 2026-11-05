@@ -18,7 +18,7 @@ class AppointmentController extends Controller
         $status = $request->query('status');
 
         $appointments = $salon->appointments()
-            ->with(['user', 'staff'])
+            ->with(['user', 'staff', 'transaction'])
             ->when(in_array($status, self::STATUSES), fn ($q) => $q->where('status', $status))
             ->latest('appointment_at')
             ->paginate(15)

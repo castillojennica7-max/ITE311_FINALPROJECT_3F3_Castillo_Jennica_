@@ -14,6 +14,9 @@ use App\Http\Controllers\Owner\StaffController as OwnerStaffController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Owner\TransactionController as OwnerTransactionController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\TransactionController;
 
 // Public home page (content galing sa Strapi)
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -27,6 +30,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    // Resibo: customer na nagbayad, may-ari ng salon, o admin (sinusuri sa controller)
+    Route::get('/receipts/{transaction}', [TransactionController::class, 'show'])->name('transactions.receipt');
 
     // Para sa customers lang ang pag-book
     Route::middleware('role:customer')->group(function () {
@@ -35,6 +40,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/salons/{salon}/book', [AppointmentController::class, 'book'])->name('appointments.book');
         Route::post('/salons/{salon}/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
         Route::patch('/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
+        Route::post('/appointments/{appointment}/pay', [PaymentController::class, 'checkout'])->name('payments.checkout');
+        Route::get('/appointments/{appointment}/paid', [PaymentController::class, 'success'])->name('payments.success');
     });
 
     // Para sa salon owners lang ang subscription
@@ -75,6 +82,10 @@ Route::middleware(['auth', 'role:salon_owner', 'subscribed'])
 
         Route::get('/settings', [OwnerSalonController::class, 'edit'])->name('settings.edit');
         Route::patch('/settings', [OwnerSalonController::class, 'update'])->name('settings.update');
+
+        Route::get('/transactions', [OwnerTransactionController::class, 'index'])->name('transactions.index');
+        Route::get('/appointments/{appointment}/payment', [OwnerTransactionController::class, 'create'])->name('transactions.create');
+        Route::post('/appointments/{appointment}/payment', [OwnerTransactionController::class, 'store'])->name('transactions.store');
     });
 
 require __DIR__ . '/auth.php';

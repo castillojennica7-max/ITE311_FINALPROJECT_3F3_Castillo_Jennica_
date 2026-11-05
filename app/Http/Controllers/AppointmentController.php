@@ -18,7 +18,7 @@ class AppointmentController extends Controller
     {
         $appointments = $request->user()
             ->appointments()
-            ->with(['staff', 'salon'])
+            ->with(['staff', 'salon', 'transaction'])
             ->latest('appointment_at')
             ->get();
 

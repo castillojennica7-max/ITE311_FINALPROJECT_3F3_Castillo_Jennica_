@@ -50,6 +50,9 @@
                         <x-nav-link :href="route('owner.customers.index')" :active="request()->routeIs('owner.customers.*')">
                             Customers
                         </x-nav-link>
+                        <x-nav-link :href="route('owner.transactions.index')" :active="request()->routeIs('owner.transactions.*')">
+                            Transactions
+                        </x-nav-link>
                         <x-nav-link :href="route('subscriptions.index')" :active="request()->routeIs('subscriptions.*')">
                             Subscription
                         </x-nav-link>
@@ -122,6 +125,7 @@
                 <x-responsive-nav-link :href="route('owner.appointments.index')" :active="request()->routeIs('owner.appointments.*')">Appointments</x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('owner.staff.index')" :active="request()->routeIs('owner.staff.*')">Staff</x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('owner.customers.index')" :active="request()->routeIs('owner.customers.*')">Customers</x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('owner.transactions.index')" :active="request()->routeIs('owner.transactions.*')">Transactions</x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('subscriptions.index')" :active="request()->routeIs('subscriptions.*')">Subscription</x-responsive-nav-link>
             @else
                 <x-responsive-nav-link :href="route('appointments.create')" :active="request()->routeIs('appointments.create')">Book Appointment</x-responsive-nav-link>

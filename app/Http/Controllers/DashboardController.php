@@ -52,12 +52,10 @@ class DashboardController extends Controller
                     'pending'   => $salon->appointments()->where('status', 'pending')->count(),
                     'staff'     => $salon->staff()->count(),
                     'customers' => $salon->appointments()->distinct()->count('user_id'),
-                    // Pansamantala: kita mula sa completed na appointments (papalitan ng Transactions sa Part 4)
-                    'revenue'   => (float) $salon->appointments()
-                        ->where('status', 'completed')
-                        ->whereMonth('appointment_at', now()->month)
-                        ->whereYear('appointment_at', now()->year)
-                        ->sum('service_price'),
+                                        'revenue'   => (float) $salon->transactions()
+                        ->whereMonth('paid_at', now()->month)
+                        ->whereYear('paid_at', now()->year)
+                        ->sum('amount'),
                 ];
 
                 $upcoming = $salon->appointments()
