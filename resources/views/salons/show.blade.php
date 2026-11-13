@@ -50,9 +50,13 @@
                     <p class="text-gray-500 mt-1">{{ $salon->tagline }}</p>
                 @endif
                 <ul class="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-sm text-gray-600">
-                    @if($salon->address)<li>📍 {{ $salon->address }}</li>@endif
-                    @if($salon->phone)<li>📞 {{ $salon->phone }}</li>@endif
-                    <li>🕒 {{ $salon->todayLabel() }}</li>
+                    @if($salon->address)
+                        <li class="flex items-center gap-2"><x-icon name="pin" size="w-4 h-4" class="text-[#c45a9a]" /> {{ $salon->address }}</li>
+                    @endif
+                    @if($salon->phone)
+                        <li class="flex items-center gap-2"><x-icon name="phone" size="w-4 h-4" class="text-[#c45a9a]" /> {{ $salon->phone }}</li>
+                    @endif
+                    <li class="flex items-center gap-2"><x-icon name="clock" size="w-4 h-4" class="text-[#c45a9a]" /> {{ $salon->todayLabel() }}</li>
                 </ul>
             </div>
 
@@ -87,7 +91,10 @@
                         @foreach($promotions as $promo)
                             <div class="bg-white rounded-2xl border border-[#f0dce8] shadow-sm overflow-hidden">
                                 <div class="px-5 py-3 text-white bg-gradient-to-r {{ $promo->isBundle() ? 'from-[#2d5f7b] to-[#5ac4b8]' : 'from-[#7b2d5f] to-[#c45a9a]' }}">
-                                    <p class="text-xs uppercase tracking-widest text-white/80">{{ $promo->isBundle() ? '🎁 Bundle' : '🔥 Promo' }}</p>
+                                    <p class="inline-flex items-center gap-1.5 text-xs uppercase tracking-widest text-white/80">
+                                        <x-icon :name="$promo->isBundle() ? 'gift' : 'flame'" size="w-4 h-4" />
+                                        {{ $promo->isBundle() ? 'Bundle' : 'Promo' }}
+                                    </p>
                                     <p class="text-xl font-extrabold">{{ $promo->badge() }}</p>
                                 </div>
                                 <div class="p-5">
@@ -98,7 +105,7 @@
                                     @if($promo->includedList())
                                         <ul class="mt-3 space-y-1 text-sm text-gray-700">
                                             @foreach($promo->includedList() as $item)
-                                                <li>✓ {{ $item }}</li>
+                                                <li class="flex items-start gap-2"><x-icon name="check" size="w-4 h-4 mt-0.5 shrink-0" class="text-[#7b2d5f]" /><span>{{ $item }}</span></li>
                                             @endforeach
                                         </ul>
                                     @endif
@@ -130,7 +137,7 @@
                                         <p class="mt-1 text-sm text-gray-600">{{ $service->description }}</p>
                                     @endif
                                     <div class="mt-2 flex items-center justify-between">
-                                        <span class="text-xs text-gray-500">⏱ {{ $service->duration_minutes }} minutes</span>
+                                        <span class="inline-flex items-center gap-1 text-xs text-gray-500"><x-icon name="clock" size="w-3.5 h-3.5" /> {{ $service->duration_minutes }} minutes</span>
                                         @guest
                                             <a href="{{ route('login') }}" class="text-sm font-semibold text-[#7b2d5f] hover:underline">Log in to book</a>
                                         @else

@@ -72,7 +72,7 @@
                         <ul class="mt-4 space-y-2 text-sm">
                             @foreach($checklist as [$text, $ok, $url])
                                 <li class="flex items-center gap-3">
-                                    <span class="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold {{ $ok ? 'bg-green-500 text-white' : 'border-2 border-gray-300 text-transparent' }}">✓</span>
+                                    <span class="w-5 h-5 rounded-full flex items-center justify-center {{ $ok ? 'bg-green-500 text-white' : 'border-2 border-gray-300 text-transparent' }}"><x-icon name="check" size="w-3 h-3" /></span>
                                     @if($ok)
                                         <span class="text-gray-400 line-through">{{ $text }}</span>
                                     @else

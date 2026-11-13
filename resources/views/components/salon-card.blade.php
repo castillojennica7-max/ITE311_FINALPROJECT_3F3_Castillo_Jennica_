@@ -46,11 +46,20 @@
 
         <ul class="mt-3 space-y-1 text-sm text-gray-600">
             @if($salon->address)
-                <li>📍 {{ $salon->address }}</li>
+                <li class="flex items-start gap-2">
+                    <x-icon name="pin" size="w-4 h-4 mt-0.5 shrink-0" class="text-[#c45a9a]" />
+                    <span>{{ $salon->address }}</span>
+                </li>
             @endif
-            <li>🕒 {{ $salon->todayLabel() }}</li>
+            <li class="flex items-center gap-2">
+                <x-icon name="clock" size="w-4 h-4 shrink-0" class="text-[#c45a9a]" />
+                <span>{{ $salon->todayLabel() }}</span>
+            </li>
             @if($from)
-                <li>💸 Services from <span class="font-semibold text-[#7b2d5f]">₱{{ number_format($from) }}</span></li>
+                <li class="flex items-center gap-2">
+                    <x-icon name="tag" size="w-4 h-4 shrink-0" class="text-[#c45a9a]" />
+                    <span>Services from <span class="font-semibold text-[#7b2d5f]">₱{{ number_format($from) }}</span></span>
+                </li>
             @endif
         </ul>
 

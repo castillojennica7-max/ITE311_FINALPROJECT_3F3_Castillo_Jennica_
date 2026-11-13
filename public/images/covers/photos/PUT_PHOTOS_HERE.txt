@@ -1,0 +1,7 @@
+Ilagay dito ang mga litrato (JPG, PNG, o WEBP) na gusto mong gamitin bilang cover photo ng mga salon.
+Pinakamagandang sukat: mga 1600 x 600 pixels, hindi lalagpas sa 500 KB bawat isa.
+
+Pagkatapos, sa terminal:  php artisan salons:assign-covers
+
+Kung ang pangalan ng file ay kapareho ng pangalan ng salon (halimbawa glam-haven-salon.jpg),
+iyon mismo ang gagamitin para sa salon na iyon. Ang iba ay iikot sa mga natitirang litrato.

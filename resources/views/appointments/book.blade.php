@@ -88,8 +88,8 @@
                 <aside class="space-y-6">
                     <div class="bg-white rounded-2xl border border-[#f0dce8] shadow-sm p-6">
                         <p class="font-extrabold text-gray-900">{{ $salon->name }}</p>
-                        @if($salon->address)<p class="text-sm text-gray-600 mt-1">📍 {{ $salon->address }}</p>@endif
-                        @if($salon->phone)<p class="text-sm text-gray-600">📞 {{ $salon->phone }}</p>@endif
+                        @if($salon->address)<p class="flex items-center gap-2 text-sm text-gray-600 mt-1"><x-icon name="pin" size="w-4 h-4" class="text-[#c45a9a]" /> {{ $salon->address }}</p>@endif
+                        @if($salon->phone)<p class="flex items-center gap-2 text-sm text-gray-600"><x-icon name="phone" size="w-4 h-4" class="text-[#c45a9a]" /> {{ $salon->phone }}</p>@endif
                         <a href="{{ route('salons.show', $salon) }}" class="inline-block mt-3 text-sm font-semibold text-[#7b2d5f] hover:underline">View salon page &rarr;</a>
                     </div>
 

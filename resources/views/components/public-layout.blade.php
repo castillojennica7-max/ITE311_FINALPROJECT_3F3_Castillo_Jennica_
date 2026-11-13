@@ -15,7 +15,15 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>[x-cloak] { display: none !important; }</style>
 </head>
-<body class="font-sans antialiased text-gray-800 bg-[#fbf7fa]">
+<body class="font-sans antialiased text-gray-800 bg-[#faf3f8]">
+
+    {{-- Background: malambot na gradient at mga hugis --}}
+    <div class="fixed inset-0 -z-10 pointer-events-none" aria-hidden="true">
+        <div class="absolute inset-0 bg-gradient-to-b from-[#fdf6fa] via-[#f8e9f2] to-[#f1d9e8]"></div>
+        <div class="absolute top-24 -left-32 w-[26rem] h-[26rem] rounded-full bg-[#e9b8d4]/40 blur-3xl"></div>
+        <div class="absolute top-1/2 -right-32 w-[30rem] h-[30rem] rounded-full bg-[#c9a7e0]/35 blur-3xl"></div>
+        <div class="absolute -bottom-24 left-1/4 w-[24rem] h-[24rem] rounded-full bg-[#f4c2a8]/30 blur-3xl"></div>
+    </div>
 
     {{-- Header --}}
     <header x-data="{ open: false }" class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-[#f0dce8]">

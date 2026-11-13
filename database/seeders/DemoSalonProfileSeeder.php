@@ -40,7 +40,7 @@ class DemoSalonProfileSeeder extends Seeder
         $rows = [
             [
                 'email'   => 'maria.santos@salonsync.test',
-                'cover'   => 'salon',
+                'cover'   => 'glam-haven',
                 'tagline' => 'Premium hair, nails, and bridal beauty',
                 'about'   => "Glam Haven Salon is a full-service salon in the heart of Poblacion. Our stylists, colorists, and nail artists have more than ten years of experience, and we use only trusted professional products.\n\nWalk in for a quick trim or book ahead for our bridal and event packages.",
                 'hours'   => $week('09:00', '19:00', ['09:00', '20:00'], ['10:00', '17:00']),
@@ -60,7 +60,7 @@ class DemoSalonProfileSeeder extends Seeder
             ],
             [
                 'email'   => 'jose.ramirez@salonsync.test',
-                'cover'   => 'salon',
+                'cover'   => 'kulay-beauty',
                 'tagline' => 'Color specialists: balayage, highlights, and more',
                 'about'   => 'Kulay Beauty Studio is all about color. Our colorists craft custom shades that fit your skin tone and lifestyle, from subtle highlights to bold transformations.',
                 'hours'   => $week('10:00', '19:00', ['09:00', '19:00']),
@@ -79,7 +79,7 @@ class DemoSalonProfileSeeder extends Seeder
             ],
             [
                 'email'   => 'angelica.reyes@salonsync.test',
-                'cover'   => 'salon',
+                'cover'   => 'bella-trese',
                 'tagline' => 'Affordable everyday beauty',
                 'about'   => 'Bella Trese Salon offers friendly, budget-friendly service for the whole family. Quick, clean, and always on time.',
                 'hours'   => $week('09:00', '18:00', ['09:00', '18:00'], ['10:00', '16:00']),
@@ -98,7 +98,7 @@ class DemoSalonProfileSeeder extends Seeder
             ],
             [
                 'email'   => 'ricardo.delacruz@salonsync.test',
-                'cover'   => 'barber',
+                'cover'   => 'cutting-edge',
                 'tagline' => 'Sharp cuts for sharp people',
                 'about'   => 'The Cutting Edge Barbershop is a classic barbershop with a modern touch. Walk-ins are welcome, but booking guarantees your chair.',
                 'hours'   => $week('09:00', '20:00', null, ['10:00', '18:00']),
@@ -117,7 +117,7 @@ class DemoSalonProfileSeeder extends Seeder
             ],
             [
                 'email'   => 'cristina.villanueva@salonsync.test',
-                'cover'   => 'nails',
+                'cover'   => 'hiraya',
                 'tagline' => 'Hair and nails under one roof',
                 'about'   => 'Hiraya Hair and Nails brings hair and nail services together so you can finish everything in one visit.',
                 'hours'   => $week('10:00', '19:00', ['09:00', '20:00'], ['11:00', '17:00']),
@@ -137,7 +137,7 @@ class DemoSalonProfileSeeder extends Seeder
             ],
             [
                 'email'   => 'benjamin.aquino@salonsync.test',
-                'cover'   => 'spa',
+                'cover'   => 'mestiza',
                 'tagline' => 'Relax. Refresh. Renew.',
                 'about'   => "Mestiza Salon and Spa is your escape from the busy day. Enjoy signature haircuts, restorative spa treatments, and professional makeup in a calm, comfortable space.\n\nAppointments are recommended for all spa services.",
                 'hours'   => $week('10:00', '20:00', ['09:00', '21:00'], ['10:00', '19:00']),
@@ -157,7 +157,7 @@ class DemoSalonProfileSeeder extends Seeder
             ],
             [
                 'email'   => 'rowena.bautista@salonsync.test',
-                'cover'   => 'salon',
+                'cover'   => 'lakambini',
                 'tagline' => 'Your neighborhood beauty lounge',
                 'about'   => 'Lakambini Beauty Lounge offers dependable hair, nail, and lash services in a relaxed, welcoming setting.',
                 'hours'   => $week('09:30', '18:30', ['09:00', '19:00']),
@@ -176,7 +176,7 @@ class DemoSalonProfileSeeder extends Seeder
             ],
             [
                 'email'   => 'eduardo.navarro@salonsync.test',
-                'cover'   => 'salon',
+                'cover'   => 'ginto',
                 'tagline' => 'Trusted hair studio since day one',
                 'about'   => 'Ginto Hair Studio specializes in hair color, perms, and treatments for men and women.',
                 'hours'   => $week('09:00', '18:00', ['09:00', '18:00']),
@@ -195,7 +195,7 @@ class DemoSalonProfileSeeder extends Seeder
             ],
             [
                 'email'   => 'liza.mercado@salonsync.test',
-                'cover'   => 'nails',
+                'cover'   => 'sampaguita',
                 'tagline' => 'Nails done right, every time',
                 'about'   => 'Sampaguita Nail Bar focuses on clean, creative, long-lasting nail care. All tools are sanitized after every customer.',
                 'hours'   => $week('10:00', '19:00', ['10:00', '20:00'], ['11:00', '18:00']),
@@ -215,7 +215,7 @@ class DemoSalonProfileSeeder extends Seeder
             ],
             [
                 'email'   => 'marco.domingo@salonsync.test',
-                'cover'   => 'barber',
+                'cover'   => 'urban-trim',
                 'tagline' => 'Modern cuts, classic shaves',
                 'about'   => 'Urban Trim Barbershop is a neighborhood barbershop with fast service, fair prices, and skilled barbers.',
                 'hours'   => $week('09:00', '21:00', null, ['09:00', '19:00']),
@@ -244,11 +244,15 @@ class DemoSalonProfileSeeder extends Seeder
                 continue;
             }
 
+            // Papalitan lang ang default na larawan; hindi gagalawin ang in-upload na larawan o totoong litrato
+            $current   = $salon->cover_path;
+            $isDefault = ! $current || preg_match('#^images/covers/[^/]+\.svg$#', $current);
+
             $salon->update([
                 'tagline'       => $row['tagline'],
                 'about'         => $row['about'],
                 'opening_hours' => $row['hours'],
-                'cover_path'    => $salon->cover_path ?: 'images/covers/' . $row['cover'] . '.svg',
+                'cover_path'    => $isDefault ? 'images/covers/' . $row['cover'] . '.svg' : $current,
             ]);
 
             if ($salon->services()->doesntExist()) {
