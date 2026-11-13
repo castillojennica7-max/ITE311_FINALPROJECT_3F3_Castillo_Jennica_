@@ -10,18 +10,27 @@
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700,800&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gradient-to-b from-[#fdf6fa] via-[#f8e9f2] to-[#f1d9e8]">
+    <body class="font-sans antialiased bg-[#faf3f8]">
+
+        {{-- Background: malambot na gradient at mga malabong hugis --}}
+        <div class="fixed inset-0 -z-10 pointer-events-none" aria-hidden="true">
+            <div class="absolute inset-0 bg-gradient-to-b from-[#fdf6fa] via-[#f8e9f2] to-[#f1d9e8]"></div>
+            <div class="absolute top-24 -left-32 w-[26rem] h-[26rem] rounded-full bg-[#e9b8d4]/40 blur-3xl"></div>
+            <div class="absolute top-1/2 -right-32 w-[30rem] h-[30rem] rounded-full bg-[#c9a7e0]/35 blur-3xl"></div>
+            <div class="absolute -bottom-24 left-1/4 w-[24rem] h-[24rem] rounded-full bg-[#f4c2a8]/30 blur-3xl"></div>
+        </div>
+
+        <div class="min-h-screen">
             @include('layouts.navigation')
 
             <!-- Page Heading -->
             @isset($header)
-                <header class="bg-[#f3e3ee] shadow">
+                <header class="bg-gradient-to-r from-[#5f2249] via-[#7b2d5f] to-[#c45a9a] shadow [&_h1]:!text-white [&_h2]:!text-white">
                     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                         {{ $header }}
                     </div>
