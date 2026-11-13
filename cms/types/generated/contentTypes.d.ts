@@ -519,6 +519,9 @@ export interface ApiHomePageHomePage extends Struct.SingleTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    about_points: Schema.Attribute.Text;
+    about_text: Schema.Attribute.Text;
+    about_title: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -579,6 +582,7 @@ export interface ApiReportReport extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
+    active_subscriptions: Schema.Attribute.Integer;
     cancelled_count: Schema.Attribute.Integer;
     completed_count: Schema.Attribute.Integer;
     completed_revenue: Schema.Attribute.Decimal;
@@ -592,6 +596,7 @@ export interface ApiReportReport extends Struct.CollectionTypeSchema {
       'api::report.report'
     > &
       Schema.Attribute.Private;
+    monthly_recurring_revenue: Schema.Attribute.Decimal;
     pending_count: Schema.Attribute.Integer;
     publishedAt: Schema.Attribute.DateTime;
     report_date: Schema.Attribute.Date &

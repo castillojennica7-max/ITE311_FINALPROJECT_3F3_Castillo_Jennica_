@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Appointment;
 use App\Models\Salon;
+use App\Models\SalonService;
 use App\Notifications\AppointmentBooked;
-use App\Services\StrapiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -26,59 +26,59 @@ class AppointmentController extends Controller
     }
 
     // Hakbang 1: pumili ng salon (mga salon na may aktibong subscription lang)
-    public function create()
+    public function create(Request $request)
     {
-        return view('appointments.create', [
-            'salons' => Salon::active()->orderBy('name')->get(),
-        ]);
+        $q = trim((string) $request->query('q'));
+
+        $salons = Salon::active()
+            ->when($q !== '', fn ($query) => $query->where(
+                fn ($w) => $w->where('name', 'like', "%{$q}%")->orWhere('address', 'like', "%{$q}%")
+            ))
+            ->orderBy('name')
+            ->get();
+
+        return view('appointments.create', compact('salons', 'q'));
     }
 
     // Hakbang 2: booking form para sa napiling salon
-    public function book(StrapiService $strapi, Salon $salon)
+    public function book(Request $request, Salon $salon)
     {
         abort_unless($salon->isActive(), 404);
 
-        $services = $strapi->services();
-
         return view('appointments.book', [
-            'salon'     => $salon,
-            'services'  => $services ?? [],
-            'cmsOnline' => $services !== null,
-            'staff'     => $salon->staff()->orderBy('name')->get(),
+            'salon'    => $salon,
+            'services' => $salon->services()->where('is_active', true)->orderBy('category')->orderBy('name')->get(),
+            'staff'    => $salon->staff()->orderBy('name')->get(),
+            'selected' => (int) $request->query('service'),
         ]);
     }
 
     // I-save ang booking
-    public function store(Request $request, StrapiService $strapi, Salon $salon)
+    public function store(Request $request, Salon $salon)
     {
         abort_unless($salon->isActive(), 404);
 
         $data = $request->validate([
-            'service_document_id' => 'required|string',
+            // Serbisyo ng napiling salon lang ang puwede
+            'salon_service_id' => ['required', Rule::exists('salon_services', 'id')
+                ->where('salon_id', $salon->id)
+                ->where('is_active', true)],
             // Staff ng napiling salon lang ang puwede
-            'staff_id'            => ['nullable', Rule::exists('staff', 'id')->where('salon_id', $salon->id)],
-            'appointment_at'      => 'required|date|after:now',
-            'notes'               => 'nullable|string|max:500',
+            'staff_id'         => ['nullable', Rule::exists('staff', 'id')->where('salon_id', $salon->id)],
+            'appointment_at'   => 'required|date|after:now',
+            'notes'            => 'nullable|string|max:500',
         ]);
 
-        $services = $strapi->services();
+        // Ang presyo ay kinukuha sa database ng salon, hindi sa ipinadala ng browser
+        $service = SalonService::findOrFail($data['salon_service_id']);
+        $when    = Carbon::parse($data['appointment_at']);
 
-        if ($services === null) {
+        // Bukas ba ang salon sa oras na iyon?
+        if (! $salon->isOpenAt($when, (int) $service->duration_minutes)) {
             return back()->withInput()->withErrors([
-                'service_document_id' => 'The service list is unavailable right now. Please try again later.',
+                'appointment_at' => $salon->dayHoursLabel($when) . ' Please choose a time within opening hours, with enough time to finish the service before closing.',
             ]);
         }
-
-        // Kukunin natin ang presyo mula sa CMS, hindi sa ipinadala ng browser
-        $service = collect($services)->firstWhere('documentId', $data['service_document_id']);
-
-        if (! $service) {
-            return back()->withInput()->withErrors([
-                'service_document_id' => 'Please choose a valid service.',
-            ]);
-        }
-
-        $when = Carbon::parse($data['appointment_at']);
 
         // Limit ng plan ng salon: bilang ng appointments kada buwan
         $limit = $salon->subscriptions()->active()->latest('starts_at')->first()?->max_monthly_appointments;
@@ -97,16 +97,23 @@ class AppointmentController extends Controller
             }
         }
 
-        // Iwasan ang double booking ng parehong staff sa parehong oras
+        // Iwasan ang magkapatong na booking ng parehong staff
         if (! empty($data['staff_id'])) {
+            $end = $when->copy()->addMinutes((int) $service->duration_minutes);
+
             $taken = Appointment::where('staff_id', $data['staff_id'])
-                ->where('appointment_at', $when)
                 ->whereIn('status', ['pending', 'confirmed'])
-                ->exists();
+                ->whereBetween('appointment_at', [$when->copy()->startOfDay(), $when->copy()->endOfDay()])
+                ->get()
+                ->contains(function ($a) use ($when, $end) {
+                    $aEnd = $a->appointment_at->copy()->addMinutes((int) $a->service_duration_minutes);
+
+                    return $a->appointment_at < $end && $aEnd > $when;
+                });
 
             if ($taken) {
                 return back()->withInput()->withErrors([
-                    'appointment_at' => 'That stylist is already booked at that time. Please choose another time.',
+                    'appointment_at' => 'That stylist is already booked at that time. Please choose another time or stylist.',
                 ]);
             }
         }
@@ -114,10 +121,10 @@ class AppointmentController extends Controller
         $appointment = $salon->appointments()->create([
             'user_id'                  => $request->user()->id,
             'staff_id'                 => $data['staff_id'] ?? null,
-            'service_document_id'      => $service['documentId'],
-            'service_name'             => $service['name'],
-            'service_price'            => $service['price'],
-            'service_duration_minutes' => $service['duration_minutes'],
+            'service_document_id'      => 'svc-' . $service->id,
+            'service_name'             => $service->name,
+            'service_price'            => $service->price,
+            'service_duration_minutes' => $service->duration_minutes,
             'appointment_at'           => $when,
             'notes'                    => $data['notes'] ?? null,
         ]);
@@ -138,7 +145,7 @@ class AppointmentController extends Controller
     {
         abort_unless($appointment->user_id === $request->user()->id, 403);
 
-        if (in_array($appointment->status, ['pending', 'confirmed'])) {
+        if (in_array($appointment->status, ['pending', 'confirmed']) && ! $appointment->transaction()->exists()) {
             $appointment->update(['status' => 'cancelled']);
         }
 

@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Appointment;
+use App\Models\Salon;
+use App\Models\SalonPromotion;
+use App\Models\SalonService;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -11,25 +16,44 @@ class HomeController extends Controller
     {
         $base = rtrim(config('services.strapi.url'), '/');
 
-        $home = $this->fetch("$base/api/home-page");
+        // Galing sa Strapi CMS: nilalaman ng home page, announcements, at subscription plans
+        $home          = $this->fetch("$base/api/home-page");
         $announcements = $this->fetch("$base/api/announcements", [
-            'sort' => 'publishedAt:desc',
+            'sort'       => 'publishedAt:desc',
             'pagination' => ['pageSize' => 3],
         ]);
-        $services = $this->fetch("$base/api/services", ['sort' => 'name:asc']);
         $plans = $this->fetch("$base/api/plans", ['sort' => 'price:asc']);
 
         $announcementList = collect($announcements['data'] ?? [])->map(fn ($a) => [
             'title' => $a['title'] ?? '',
             'text'  => $this->blocksToText($a['content'] ?? []),
+            'date'  => isset($a['publishedAt']) ? Carbon::parse($a['publishedAt'])->format('M d, Y') : null,
         ])->all();
+
+        // Galing sa database ng SalonSync: mga salon at promo ng mga ito
+        $salons = Salon::active()->latest()->limit(6)->get();
+
+        $promotions = SalonPromotion::current()
+            ->whereHas('salon', fn ($q) => $q->active())
+            ->with('salon')
+            ->latest()
+            ->limit(6)
+            ->get();
+
+        $stats = [
+            'salons'   => Salon::active()->count(),
+            'services' => SalonService::where('is_active', true)->whereHas('salon', fn ($q) => $q->active())->count(),
+            'bookings' => Appointment::count(),
+        ];
 
         return view('home', [
             'home'          => $home['data'] ?? null,
             'announcements' => $announcementList,
-            'services'      => $services['data'] ?? [],
-            'cmsOnline'     => $home !== null,
             'plans'         => $plans['data'] ?? [],
+            'salons'        => $salons,
+            'promotions'    => $promotions,
+            'stats'         => $stats,
+            'cmsOnline'     => $home !== null,
         ]);
     }
 

@@ -1,138 +1,330 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SalonSync</title>
-    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; color: #333; background: #fafafa; }
-        header { background: #7b2d5f; color: #fff; padding: 16px 32px; font-size: 22px; font-weight: bold; }
-        .hero { background: #f3e3ee; text-align: center; padding: 64px 24px; }
-        .hero h1 { margin: 0 0 12px; font-size: 36px; color: #7b2d5f; }
-        .hero p { max-width: 600px; margin: 0 auto; font-size: 18px; }
-        section { max-width: 960px; margin: 40px auto; padding: 0 24px; }
-        h2 { color: #7b2d5f; }
-        .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
-        .card { background: #fff; border: 1px solid #e5d5df; border-radius: 8px; padding: 16px; }
-        .card h3 { margin-top: 0; }
-        .price { color: #7b2d5f; font-weight: bold; }
-        .warning { background: #fff3cd; padding: 12px 24px; text-align: center; }
-        footer { text-align: center; padding: 24px; color: #888; }
-        .btn-light { background: #fff; color: #7b2d5f; padding: 9px 22px; border-radius: 999px; text-decoration: none; font-weight: bold; font-size: 16px; }
-        .btn-light:hover { background: #f3e3ee; }
-        .btn-outline { background: transparent; color: #fff; border: 2px solid #fff; padding: 7px 22px; border-radius: 999px; text-decoration: none; font-weight: bold; font-size: 16px; font-family: inherit; cursor: pointer; }
-        .btn-outline:hover { background: #fff; color: #7b2d5f; }
-    </style>
-</head>
-<body>
-            <header style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-        <a href="{{ route('home') }}" style="display: flex; align-items: center; gap: 10px; color: #fff; text-decoration: none;">
-            <x-application-logo style="height: 40px; width: 40px;" />
-            <span>SalonSync</span>
-        </a>
+<x-public-layout>
+@php
+    $user = auth()->user();
 
-        <nav style="display: flex; align-items: center; gap: 12px; font-size: 16px; font-weight: bold;">
-            <a href="#pricing" style="color: #fff; text-decoration: none; margin-right: 8px;">Pricing</a>
-            @auth
-                <a href="{{ route('dashboard') }}" class="btn-light">Dashboard</a>
-                <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
-                    @csrf
-                    <button type="submit" class="btn-outline">Log out</button>
-                </form>
-            @else
-                <a href="{{ route('login') }}" class="btn-outline">Log in</a>
-                <a href="{{ route('register') }}" class="btn-light">Sign up</a>
-            @endauth
-        </nav>
-    </header>
+    $heroTitle = $home['hero_title'] ?? 'Beauty starts here at SalonSync';
+    $heroSub   = $home['hero_subtitle'] ?? 'Discover trusted salons, compare services and prices, and book your next appointment in minutes.';
+
+    $aboutTitle = $home['about_title'] ?? 'About SalonSync';
+    $aboutText  = $home['about_text'] ?? 'SalonSync is a web-based SaaS platform that helps salon businesses manage customers, services, appointments, staff, and transactions in one system. Salon businesses subscribe to the platform and use its management tools to improve their daily operations, while customers discover salons, compare prices, and book online.';
+
+    $aboutPoints = collect(preg_split('/\r\n|\r|\n/', (string) ($home['about_points'] ?? '')))
+        ->map(fn ($line) => trim($line))
+        ->filter()
+        ->values();
+
+    if ($aboutPoints->isEmpty()) {
+        $aboutPoints = collect([
+            'Manage customers, staff, and services in one place',
+            'Online booking with real-time opening hours',
+            'Payments, receipts, and revenue reports',
+            'Promos and bundles that bring customers back',
+        ]);
+    }
+
+    $aboutIcons = ['✂️', '📅', '💳', '🎁', '📊', '⭐'];
+@endphp
 
     @unless($cmsOnline)
-        <div class="warning">The content server is currently unavailable. Please try again later.</div>
+        <div class="bg-amber-100 text-amber-900 text-sm text-center px-4 py-2">
+            Some content is temporarily unavailable. Please try again later.
+        </div>
     @endunless
 
-    <div class="hero">
-        <h1>{{ $home['hero_title'] ?? 'Welcome to SalonSync' }}</h1>
-        <p>{{ $home['hero_subtitle'] ?? '' }}</p>
-                        @if(! auth()->check() || auth()->user()->isCustomer())
-            <p style="margin-top: 24px;">
-                <a href="{{ route('appointments.create') }}"
-                   style="background: #7b2d5f; color: #fff; padding: 12px 24px; border-radius: 6px; text-decoration: none;">
-                    Book an Appointment
-                </a>
-            </p>
-        @endif
-    </div>
+    {{-- ============ HERO ============ --}}
+    <section class="relative overflow-hidden bg-gradient-to-br from-[#5f2249] via-[#7b2d5f] to-[#c45a9a] text-white">
+        <div class="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-white/10"></div>
+        <div class="absolute -bottom-32 -right-16 w-[28rem] h-[28rem] rounded-full bg-white/10"></div>
 
-    <section>
-        <h2>Latest Announcements</h2>
-        @forelse($announcements as $announcement)
-            <div class="card" style="margin-bottom: 12px;">
-                <h3>{{ $announcement['title'] }}</h3>
-                <p>{!! nl2br(e($announcement['text'])) !!}</p>
-            </div>
-        @empty
-            <p>No announcements yet.</p>
-        @endforelse
-    </section>
+        <div class="relative max-w-6xl mx-auto px-4 py-20 lg:py-28 grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+                <span class="inline-block px-3 py-1 rounded-full bg-white/15 text-sm font-medium mb-5">
+                    ✨ The all-in-one platform for salons
+                </span>
+                <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight">{{ $heroTitle }}</h1>
+                <p class="mt-5 text-lg text-white/85 max-w-xl">{{ $heroSub }}</p>
 
-    <section>
-        <h2>Our Services</h2>
-        <div class="cards">
-            @forelse($services as $service)
-                <div class="card">
-                    <h3>{{ $service['name'] }}</h3>
-                    <p>{{ $service['description'] }}</p>
-                    <p class="price">₱{{ number_format($service['price'], 2) }}</p>
-                    <small>{{ $service['duration_minutes'] }} minutes</small>
-                </div>
-            @empty
-                <p>No services available.</p>
-            @endforelse
-        </div>
-    </section>
-
-        <section id="pricing">
-        <h2>Subscription Plans for Salons</h2>
-        <div class="cards">
-            @forelse($plans as $plan)
-                <div class="card" style="{{ ($plan['is_featured'] ?? false) ? 'border: 2px solid #7b2d5f;' : '' }}">
-                    @if($plan['is_featured'] ?? false)
-                        <small class="price">MOST POPULAR</small>
-                    @endif
-                    <h3>{{ $plan['name'] }}</h3>
-                    <p class="price" style="font-size: 24px;">
-                        ₱{{ number_format($plan['price'], 2) }}
-                        <small style="color: #888; font-weight: normal;">/ month</small>
-                    </p>
-                    <p>{{ $plan['description'] ?? '' }}</p>
-                    <ul>
-                        @foreach(array_filter(array_map('trim', explode("\n", $plan['features'] ?? ''))) as $feature)
-                            <li>{{ $feature }}</li>
-                        @endforeach
-                    </ul>
-                                        @guest
+                <div class="mt-8 flex flex-wrap gap-3">
+                    <a href="{{ route('salons.index') }}"
+                       class="px-6 py-3 rounded-full bg-white text-[#7b2d5f] font-semibold shadow hover:bg-[#f3e3ee] transition">
+                        Find a salon
+                    </a>
+                    @guest
                         <a href="{{ route('register', ['type' => 'salon_owner']) }}"
-                           style="display: inline-block; background: #7b2d5f; color: #fff; padding: 10px 20px; border-radius: 6px; text-decoration: none;">
-                            Get started
+                           class="px-6 py-3 rounded-full border-2 border-white font-semibold hover:bg-white hover:text-[#7b2d5f] transition">
+                            Register your salon
                         </a>
-                    @else
-                        @if(auth()->user()->isSalonOwner())
-                            <a href="{{ route('subscriptions.create', $plan['documentId']) }}"
-                               style="display: inline-block; background: #7b2d5f; color: #fff; padding: 10px 20px; border-radius: 6px; text-decoration: none;">
-                                Subscribe
-                            </a>
-                        @else
-                            <small style="color: #888;">Plans are for salon owners.</small>
-                        @endif
                     @endguest
                 </div>
+
+                <div class="mt-10 grid grid-cols-3 gap-4 max-w-md">
+                    <div>
+                        <p class="text-3xl font-extrabold">{{ number_format($stats['salons']) }}</p>
+                        <p class="text-sm text-white/75">Partner salons</p>
+                    </div>
+                    <div>
+                        <p class="text-3xl font-extrabold">{{ number_format($stats['services']) }}</p>
+                        <p class="text-sm text-white/75">Services listed</p>
+                    </div>
+                    <div>
+                        <p class="text-3xl font-extrabold">{{ number_format($stats['bookings']) }}</p>
+                        <p class="text-sm text-white/75">Bookings made</p>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Mock cards --}}
+            <div class="hidden lg:block relative h-80">
+                <div class="absolute top-0 right-6 w-80 bg-white text-gray-800 rounded-2xl shadow-2xl p-5 rotate-2">
+                    <p class="text-xs uppercase tracking-wide text-gray-400">Upcoming appointment</p>
+                    <p class="mt-1 text-lg font-bold">Hair Color &amp; Spa</p>
+                    <p class="text-sm text-gray-500">Saturday &middot; 2:00 PM</p>
+                    <div class="mt-4 flex items-center justify-between">
+                        <span class="px-3 py-1 rounded-full bg-green-100 text-green-800 text-xs font-semibold">Confirmed</span>
+                        <span class="font-bold text-[#7b2d5f]">₱1,800</span>
+                    </div>
+                </div>
+                <div class="absolute bottom-0 left-4 w-72 bg-white text-gray-800 rounded-2xl shadow-2xl p-5 -rotate-3">
+                    <p class="text-xs uppercase tracking-wide text-gray-400">Payment received</p>
+                    <p class="mt-1 text-2xl font-extrabold text-[#7b2d5f]">₱1,200.00</p>
+                    <p class="text-sm text-gray-500">Receipt sent to the customer</p>
+                    <div class="mt-3 h-2 rounded-full bg-[#f3e3ee] overflow-hidden"><div class="h-2 w-4/5 bg-[#7b2d5f] rounded-full"></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- ============ ABOUT ============ --}}
+    <section id="about" class="max-w-6xl mx-auto px-4 pt-20">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+                <p class="text-sm font-bold tracking-widest text-[#c45a9a] uppercase">Who we are</p>
+                <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-gray-900">{{ $aboutTitle }}</h2>
+                <p class="mt-5 text-gray-600 leading-relaxed whitespace-pre-line">{{ $aboutText }}</p>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4">
+                @foreach($aboutPoints->take(6) as $i => $point)
+                    <div class="bg-white rounded-2xl border border-[#f0dce8] p-5 shadow-sm">
+                        <div class="w-11 h-11 rounded-xl bg-[#f3e3ee] flex items-center justify-center text-xl">{{ $aboutIcons[$i % count($aboutIcons)] }}</div>
+                        <p class="mt-3 font-semibold text-gray-800 leading-snug">{{ $point }}</p>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+    {{-- ============ HOW IT WORKS ============ --}}
+    <section class="max-w-6xl mx-auto px-4 pt-20">
+        <div class="text-center max-w-2xl mx-auto">
+            <p class="text-sm font-bold tracking-widest text-[#c45a9a] uppercase">How it works</p>
+            <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-gray-900">Simple for customers. Powerful for salons.</h2>
+        </div>
+
+        <div class="mt-10 grid md:grid-cols-2 gap-6">
+            <div class="bg-white rounded-2xl border border-[#f0dce8] p-6 shadow-sm">
+                <p class="font-bold text-[#7b2d5f]">For customers</p>
+                <ol class="mt-4 space-y-4">
+                    @foreach([['Browse salons', 'Compare services, prices, opening hours, and promos.'], ['Book online', 'Pick a service, a stylist, and a time that fits the salon schedule.'], ['Get pampered', 'Receive email updates and a receipt for every payment.']] as $i => [$t, $d])
+                        <li class="flex gap-4">
+                            <span class="shrink-0 w-9 h-9 rounded-full bg-[#7b2d5f] text-white font-bold flex items-center justify-center">{{ $i + 1 }}</span>
+                            <div><p class="font-semibold text-gray-900">{{ $t }}</p><p class="text-sm text-gray-500">{{ $d }}</p></div>
+                        </li>
+                    @endforeach
+                </ol>
+            </div>
+            <div class="bg-white rounded-2xl border border-[#f0dce8] p-6 shadow-sm">
+                <p class="font-bold text-[#7b2d5f]">For salon owners</p>
+                <ol class="mt-4 space-y-4">
+                    @foreach([['Register and subscribe', 'Choose a plan that fits the size of your team.'], ['Set up your salon', 'Add your photos, hours, services, prices, staff, and promos.'], ['Run your business', 'Manage appointments, customers, payments, and revenue.']] as $i => [$t, $d])
+                        <li class="flex gap-4">
+                            <span class="shrink-0 w-9 h-9 rounded-full bg-[#c45a9a] text-white font-bold flex items-center justify-center">{{ $i + 1 }}</span>
+                            <div><p class="font-semibold text-gray-900">{{ $t }}</p><p class="text-sm text-gray-500">{{ $d }}</p></div>
+                        </li>
+                    @endforeach
+                </ol>
+            </div>
+        </div>
+    </section>
+
+    {{-- ============ ANNOUNCEMENTS ============ --}}
+    <section class="max-w-6xl mx-auto px-4 pt-20">
+        <div class="flex items-end justify-between flex-wrap gap-2">
+            <div>
+                <p class="text-sm font-bold tracking-widest text-[#c45a9a] uppercase">What's new</p>
+                <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-gray-900">Latest announcements</h2>
+            </div>
+        </div>
+
+        <div class="mt-8 grid md:grid-cols-3 gap-5">
+            @forelse($announcements as $a)
+                <article class="bg-white rounded-2xl border border-[#f0dce8] p-6 shadow-sm hover:shadow-lg transition">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-1 rounded-full bg-[#f3e3ee] text-[#7b2d5f] text-xs font-bold">📣 NEWS</span>
+                        @if($a['date'])
+                            <span class="text-xs text-gray-400">{{ $a['date'] }}</span>
+                        @endif
+                    </div>
+                    <h3 class="mt-4 text-lg font-bold text-gray-900 leading-snug">{{ $a['title'] }}</h3>
+                    <p class="mt-2 text-sm text-gray-600 leading-relaxed">{!! nl2br(e(\Illuminate\Support\Str::limit($a['text'], 180))) !!}</p>
+                </article>
             @empty
-                <p>No plans available.</p>
+                <p class="md:col-span-3 text-gray-500">No announcements yet. Please check back soon.</p>
             @endforelse
         </div>
     </section>
-    
-    <footer>&copy; SalonSync</footer>
-</body>
-</html>
+
+    {{-- ============ PROMOTIONS AND BUNDLES ============ --}}
+    <section class="max-w-6xl mx-auto px-4 pt-20">
+        <p class="text-sm font-bold tracking-widest text-[#c45a9a] uppercase">Save more</p>
+        <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-gray-900">Promotions and bundles</h2>
+        <p class="mt-2 text-gray-500">Current deals from our partner salons.</p>
+
+        <div class="mt-8 grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+            @forelse($promotions as $promo)
+                <div class="bg-white rounded-2xl border border-[#f0dce8] shadow-sm hover:shadow-lg transition overflow-hidden flex flex-col">
+                    <div class="px-6 py-5 text-white bg-gradient-to-r {{ $promo->isBundle() ? 'from-[#2d5f7b] to-[#5ac4b8]' : 'from-[#7b2d5f] to-[#c45a9a]' }}">
+                        <p class="text-xs uppercase tracking-widest text-white/80">{{ $promo->isBundle() ? '🎁 Bundle' : '🔥 Promo' }}</p>
+                        <p class="mt-1 text-2xl font-extrabold">{{ $promo->badge() }}</p>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col">
+                        <h3 class="font-bold text-gray-900 text-lg leading-snug">{{ $promo->title }}</h3>
+                        <a href="{{ route('salons.show', $promo->salon) }}" class="text-sm text-[#7b2d5f] font-medium hover:underline">{{ $promo->salon->name }}</a>
+                        @if($promo->description)
+                            <p class="mt-2 text-sm text-gray-600">{{ $promo->description }}</p>
+                        @endif
+                        @if($promo->includedList())
+                            <ul class="mt-3 space-y-1 text-sm text-gray-700">
+                                @foreach($promo->includedList() as $item)
+                                    <li>✓ {{ $item }}</li>
+                                @endforeach
+                            </ul>
+                        @endif
+                        <div class="mt-auto pt-4 flex items-center justify-between text-xs text-gray-500">
+                            <span>{{ $promo->valid_until ? 'Until ' . $promo->valid_until->format('M d, Y') : 'Ongoing' }}</span>
+                            <a href="{{ route('salons.show', $promo->salon) }}" class="font-semibold text-[#7b2d5f] hover:underline">View salon &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <p class="md:col-span-3 text-gray-500">No promotions right now. Check back soon.</p>
+            @endforelse
+        </div>
+    </section>
+
+    {{-- ============ PARTNER SALONS ============ --}}
+    <section class="max-w-6xl mx-auto px-4 pt-20">
+        <div class="flex items-end justify-between flex-wrap gap-3">
+            <div>
+                <p class="text-sm font-bold tracking-widest text-[#c45a9a] uppercase">Our partners</p>
+                <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-gray-900">Featured salons</h2>
+                <p class="mt-2 text-gray-500">Every salon sets its own services, prices, and opening hours.</p>
+            </div>
+            <a href="{{ route('salons.index') }}" class="text-[#7b2d5f] font-semibold hover:underline">View all salons &rarr;</a>
+        </div>
+
+        <div class="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            @forelse($salons as $salon)
+                <x-salon-card :salon="$salon" />
+            @empty
+                <p class="sm:col-span-3 text-gray-500">No salons yet. Be the first to register your salon.</p>
+            @endforelse
+        </div>
+    </section>
+
+    {{-- ============ PLANS ============ --}}
+    <section id="plans" class="max-w-6xl mx-auto px-4 pt-20">
+        <div class="text-center max-w-2xl mx-auto">
+            <p class="text-sm font-bold tracking-widest text-[#c45a9a] uppercase">For salon owners</p>
+            <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-gray-900">Choose the plan that fits your salon</h2>
+            <p class="mt-3 text-gray-500">Simple monthly pricing. Upgrade or cancel anytime.</p>
+        </div>
+
+        <div class="mt-12 grid md:grid-cols-3 gap-6 items-stretch">
+            @forelse($plans as $plan)
+                @php
+                    $featured   = (bool) ($plan['is_featured'] ?? false);
+                    $staffLimit = $plan['max_staff'] ?? null;
+                    $apptLimit  = $plan['max_monthly_appointments'] ?? null;
+                    $features   = collect(preg_split('/\r\n|\r|\n/', (string) ($plan['features'] ?? '')))
+                        ->map(fn ($l) => trim($l))->filter()->values();
+                @endphp
+                <div class="relative flex flex-col rounded-3xl p-8 {{ $featured ? 'bg-gradient-to-b from-[#7b2d5f] to-[#5f2249] text-white shadow-2xl md:-translate-y-3' : 'bg-white border border-[#f0dce8] shadow-sm' }}">
+                    @if($featured)
+                        <span class="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-[#ffd166] text-[#5f2249] text-xs font-extrabold tracking-wide">MOST POPULAR</span>
+                    @endif
+
+                    <h3 class="text-xl font-bold">{{ $plan['name'] }}</h3>
+                    <p class="mt-1 text-sm {{ $featured ? 'text-white/80' : 'text-gray-500' }}">{{ $plan['description'] ?? '' }}</p>
+
+                    <p class="mt-6 flex items-end gap-1">
+                        <span class="text-4xl font-extrabold">₱{{ number_format($plan['price']) }}</span>
+                        <span class="mb-1 text-sm {{ $featured ? 'text-white/70' : 'text-gray-400' }}">/ month</span>
+                    </p>
+
+                    <div class="mt-5 flex flex-wrap gap-2 text-xs font-semibold">
+                        <span class="px-3 py-1 rounded-full {{ $featured ? 'bg-white/15' : 'bg-[#f3e3ee] text-[#7b2d5f]' }}">
+                            👥 {{ $staffLimit ? $staffLimit . ' staff' : 'Unlimited staff' }}
+                        </span>
+                        <span class="px-3 py-1 rounded-full {{ $featured ? 'bg-white/15' : 'bg-[#f3e3ee] text-[#7b2d5f]' }}">
+                            📅 {{ $apptLimit ? number_format($apptLimit) . ' bookings/mo' : 'Unlimited bookings' }}
+                        </span>
+                    </div>
+
+                    <ul class="mt-6 space-y-3 text-sm flex-1">
+                        @foreach($features as $feature)
+                            <li class="flex gap-3">
+                                <span class="shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold {{ $featured ? 'bg-white text-[#7b2d5f]' : 'bg-[#7b2d5f] text-white' }}">✓</span>
+                                <span>{{ $feature }}</span>
+                            </li>
+                        @endforeach
+                    </ul>
+
+                    <div class="mt-8">
+                        @guest
+                            <a href="{{ route('register', ['type' => 'salon_owner']) }}"
+                               class="block text-center px-6 py-3 rounded-full font-semibold transition {{ $featured ? 'bg-white text-[#7b2d5f] hover:bg-[#f3e3ee]' : 'bg-[#7b2d5f] text-white hover:bg-[#5f2249]' }}">
+                                Get started
+                            </a>
+                        @else
+                            @if($user->isSalonOwner())
+                                <a href="{{ route('subscriptions.create', $plan['documentId']) }}"
+                                   class="block text-center px-6 py-3 rounded-full font-semibold transition {{ $featured ? 'bg-white text-[#7b2d5f] hover:bg-[#f3e3ee]' : 'bg-[#7b2d5f] text-white hover:bg-[#5f2249]' }}">
+                                    Subscribe
+                                </a>
+                            @else
+                                <p class="text-center text-sm {{ $featured ? 'text-white/70' : 'text-gray-400' }}">Plans are for salon owners.</p>
+                            @endif
+                        @endguest
+                    </div>
+                </div>
+            @empty
+                <p class="md:col-span-3 text-center text-gray-500">Plans are not available right now.</p>
+            @endforelse
+        </div>
+
+        <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm text-gray-700">
+            @foreach([['🗓️', 'Online booking with your own opening hours'], ['🧾', 'Payment records and printable receipts'], ['📧', 'Automatic email notifications'], ['🔒', 'Your data stays separate from other salons']] as [$icon, $text])
+                <div class="flex items-center gap-3 bg-white rounded-xl border border-[#f0dce8] px-4 py-3">
+                    <span class="text-xl">{{ $icon }}</span><span>{{ $text }}</span>
+                </div>
+            @endforeach
+        </div>
+    </section>
+
+    {{-- ============ CTA ============ --}}
+    <section class="max-w-6xl mx-auto px-4 pt-20">
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#7b2d5f] to-[#c45a9a] text-white px-8 py-12 text-center">
+            <div class="absolute -top-10 -left-10 w-48 h-48 rounded-full bg-white/10"></div>
+            <div class="absolute -bottom-12 -right-8 w-56 h-56 rounded-full bg-white/10"></div>
+            <h2 class="relative text-3xl font-extrabold">Ready to grow your salon?</h2>
+            <p class="relative mt-2 text-white/85">Join SalonSync and manage everything in one place.</p>
+            <div class="relative mt-6 flex flex-wrap justify-center gap-3">
+                @guest
+                    <a href="{{ route('register', ['type' => 'salon_owner']) }}" class="px-6 py-3 rounded-full bg-white text-[#7b2d5f] font-semibold hover:bg-[#f3e3ee] transition">Register your salon</a>
+                @endguest
+                <a href="{{ route('salons.index') }}" class="px-6 py-3 rounded-full border-2 border-white font-semibold hover:bg-white hover:text-[#7b2d5f] transition">Browse salons</a>
+            </div>
+        </div>
+    </section>
+
+</x-public-layout>

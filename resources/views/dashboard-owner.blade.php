@@ -22,9 +22,9 @@
                 <div class="bg-white rounded-xl shadow-sm border-l-4 border-yellow-400 p-5">
                     <p class="font-semibold text-gray-900">Subscribe to start using SalonSync</p>
                     <p class="text-gray-600 mt-1">
-                        Choose a plan to unlock staff, appointment, and customer management for your salon.
+                        Choose a plan to unlock staff, services, appointment, and customer management for your salon.
                     </p>
-                    <a href="{{ route('home') }}#pricing"
+                    <a href="{{ route('home') }}#plans"
                        class="inline-block mt-3 px-4 py-2 bg-[#7b2d5f] text-white rounded-md text-sm font-semibold hover:bg-[#5f2249]">
                         View plans
                     </a>
@@ -39,7 +39,18 @@
                         ['Revenue this month', '₱' . number_format($stats['revenue'], 2)],
                         ['Current plan', $subscription->plan_name],
                     ];
+
+                    $checklist = [
+                        ['Add a tagline and a short description of your salon', filled($salon->tagline) && filled($salon->about), route('owner.settings.edit')],
+                        ['Upload your logo and cover photo', filled($salon->logo_path) || filled($salon->cover_path), route('owner.settings.edit')],
+                        ['Set your opening hours', $salon->opening_hours !== null, route('owner.settings.edit')],
+                        ['Add your services and prices', $salon->services()->exists(), route('owner.services.index')],
+                        ['Add your stylists', $salon->staff()->exists(), route('owner.staff.index')],
+                        ['Create a promo or bundle', $salon->promotions()->exists(), route('owner.promotions.index')],
+                    ];
+                    $done = collect($checklist)->where(1, true)->count();
                 @endphp
+
                 <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
                     @foreach($cards as [$label, $value])
                         <div class="bg-white rounded-xl shadow-sm border-l-4 border-[#7b2d5f] p-5">
@@ -48,6 +59,33 @@
                         </div>
                     @endforeach
                 </div>
+
+                @if($done < count($checklist))
+                    <div class="bg-white rounded-xl shadow-sm p-5">
+                        <div class="flex items-center justify-between">
+                            <p class="font-semibold text-gray-900">Set up your salon page</p>
+                            <p class="text-sm text-gray-500">{{ $done }} of {{ count($checklist) }} done</p>
+                        </div>
+                        <div class="mt-2 h-2 rounded-full bg-[#f3e3ee] overflow-hidden">
+                            <div class="h-2 bg-[#7b2d5f] rounded-full" style="width: {{ round($done / count($checklist) * 100) }}%"></div>
+                        </div>
+                        <ul class="mt-4 space-y-2 text-sm">
+                            @foreach($checklist as [$text, $ok, $url])
+                                <li class="flex items-center gap-3">
+                                    <span class="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold {{ $ok ? 'bg-green-500 text-white' : 'border-2 border-gray-300 text-transparent' }}">✓</span>
+                                    @if($ok)
+                                        <span class="text-gray-400 line-through">{{ $text }}</span>
+                                    @else
+                                        <a href="{{ $url }}" class="text-[#7b2d5f] hover:underline">{{ $text }}</a>
+                                    @endif
+                                </li>
+                            @endforeach
+                        </ul>
+                        <a href="{{ route('salons.show', $salon) }}" target="_blank" class="inline-block mt-4 text-sm font-semibold text-[#7b2d5f] hover:underline">View my public salon page &rarr;</a>
+                    </div>
+                @else
+                    <a href="{{ route('salons.show', $salon) }}" target="_blank" class="inline-block text-sm font-semibold text-[#7b2d5f] hover:underline">View my public salon page &rarr;</a>
+                @endif
 
                 <div class="bg-white rounded-xl shadow-sm overflow-x-auto">
                     <p class="px-5 pt-5 font-semibold text-gray-800">Upcoming appointments</p>

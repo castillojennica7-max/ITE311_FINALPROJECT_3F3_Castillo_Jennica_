@@ -9,17 +9,22 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Owner\AppointmentController as OwnerAppointmentController;
 use App\Http\Controllers\Owner\CustomerController as OwnerCustomerController;
+use App\Http\Controllers\Owner\PromotionController as OwnerPromotionController;
 use App\Http\Controllers\Owner\SalonController as OwnerSalonController;
+use App\Http\Controllers\Owner\ServiceController as OwnerServiceController;
 use App\Http\Controllers\Owner\StaffController as OwnerStaffController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\SubscriptionController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Owner\TransactionController as OwnerTransactionController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PublicSalonController;
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TransactionController;
+use Illuminate\Support\Facades\Route;
 
-// Public home page (content galing sa Strapi)
+// Public: landing page, listahan ng salon, at pahina ng bawat salon
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/salons', [PublicSalonController::class, 'index'])->name('salons.index');
+Route::get('/salons/{salon}', [PublicSalonController::class, 'show'])->name('salons.show');
 
 // Para sa lahat ng naka-login na user
 Route::get('/dashboard', [DashboardController::class, 'index'])
@@ -30,6 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
     // Resibo: customer na nagbayad, may-ari ng salon, o admin (sinusuri sa controller)
     Route::get('/receipts/{transaction}', [TransactionController::class, 'show'])->name('transactions.receipt');
 
@@ -80,12 +86,15 @@ Route::middleware(['auth', 'role:salon_owner', 'subscribed'])
 
         Route::get('/customers', [OwnerCustomerController::class, 'index'])->name('customers.index');
 
-        Route::get('/settings', [OwnerSalonController::class, 'edit'])->name('settings.edit');
-        Route::patch('/settings', [OwnerSalonController::class, 'update'])->name('settings.update');
-
         Route::get('/transactions', [OwnerTransactionController::class, 'index'])->name('transactions.index');
         Route::get('/appointments/{appointment}/payment', [OwnerTransactionController::class, 'create'])->name('transactions.create');
         Route::post('/appointments/{appointment}/payment', [OwnerTransactionController::class, 'store'])->name('transactions.store');
+
+        Route::get('/settings', [OwnerSalonController::class, 'edit'])->name('settings.edit');
+        Route::patch('/settings', [OwnerSalonController::class, 'update'])->name('settings.update');
+
+        Route::resource('services', OwnerServiceController::class)->except(['show']);
+        Route::resource('promotions', OwnerPromotionController::class)->except(['show']);
     });
 
 require __DIR__ . '/auth.php';
