@@ -116,7 +116,22 @@
                     </div>
                 </section>
             @endif
-
+@if($salon->address)
+    <section>
+        <h2 class="text-xl font-extrabold text-gray-900">Location</h2>
+        <p class="mt-1 text-gray-600 flex items-center gap-2">
+            <x-icon name="pin" size="w-4 h-4" class="text-[#c45a9a]" /> {{ $salon->address }}
+        </p>
+        <div class="mt-4 overflow-hidden rounded-2xl border border-[#f0dce8] shadow-sm">
+            <iframe title="Map of {{ $salon->name }}" class="w-full h-72" loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    src="https://maps.google.com/maps?q={{ urlencode($salon->name . ', ' . $salon->address) }}&amp;output=embed"></iframe>
+        </div>
+        <a href="https://www.google.com/maps/search/?api=1&amp;query={{ urlencode($salon->name . ', ' . $salon->address) }}"
+           target="_blank" rel="noopener"
+           class="inline-block mt-3 text-sm font-semibold text-[#7b2d5f] hover:underline">Open in Google Maps</a>
+    </section>
+@endif
             <section>
                 <h2 class="text-xl font-extrabold text-gray-900">Services and prices</h2>
 
