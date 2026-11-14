@@ -14,7 +14,7 @@
                 <div class="mb-4 p-3 bg-red-100 text-red-800 rounded-xl border border-red-200">{{ session('error') }}</div>
             @endif
 
-            @php $paypalEnabled = app(\App\Services\PayPalService::class)->enabled(); @endphp
+     
 
             <div class="mb-4">
                 <a href="{{ route('appointments.create') }}"
@@ -47,24 +47,16 @@
                                 <td class="px-4 py-3 font-semibold text-[#7b2d5f]">₱{{ number_format($appointment->service_price, 2) }}</td>
                                 <td class="px-4 py-3"><x-status-badge :status="$appointment->status" /></td>
                                 <td class="px-4 py-3">
-                                    @if($appointment->transaction)
-                                        <a class="inline-flex items-center gap-1.5 text-green-700 font-semibold hover:underline" href="{{ route('transactions.receipt', $appointment->transaction) }}">
-                                            <x-icon name="receipt" size="w-4 h-4" /> Paid &middot; Receipt
-                                        </a>
-                                    @elseif($appointment->status === 'cancelled')
-                                        <span class="text-gray-400">-</span>
-                                    @elseif($paypalEnabled)
-                                        <form method="POST" action="{{ route('payments.checkout', $appointment) }}">
-                                            @csrf
-                                            <button type="submit"
-                                                    class="px-3 py-1.5 bg-[#7b2d5f] text-white rounded-full text-xs font-semibold hover:bg-[#5f2249] transition">
-                                                Pay with PayPal
-                                            </button>
-                                        </form>
-                                    @else
-                                        <span class="text-gray-500">Pay at the salon</span>
-                                    @endif
-                                </td>
+    @if($appointment->transaction)
+        <a class="inline-flex items-center gap-1.5 text-green-700 font-semibold hover:underline" href="{{ route('transactions.receipt', $appointment->transaction) }}">
+            <x-icon name="receipt" size="w-4 h-4" /> Paid &middot; Receipt
+        </a>
+    @elseif($appointment->status === 'cancelled')
+        <span class="text-gray-400">-</span>
+    @else
+        <span class="text-gray-500">Pay at the salon</span>
+    @endif
+</td>
                                 <td class="px-4 py-3">
                                     @if(in_array($appointment->status, ['pending', 'confirmed']) && ! $appointment->transaction)
                                         <form method="POST" action="{{ route('appointments.cancel', $appointment) }}">
