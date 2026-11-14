@@ -36,6 +36,7 @@
                                     <x-dropdown-link :href="route('admin.users.index')">Users</x-dropdown-link>
                                     <x-dropdown-link :href="route('admin.appointments.index')">Appointments</x-dropdown-link>
                                     <x-dropdown-link :href="route('admin.subscriptions.index')">Subscriptions</x-dropdown-link>
+                                    <x-dropdown-link :href="route('admin.reports.index')">Reports</x-dropdown-link>
                                     <x-dropdown-link :href="config('services.strapi.url') . '/admin'" target="_blank">Content (CMS)</x-dropdown-link>
                                 </x-slot>
                             </x-dropdown>
@@ -72,6 +73,7 @@
                             Customers
                         </x-nav-link>
                         <x-nav-link :href="route('owner.transactions.index')" :active="request()->routeIs('owner.transactions.*')">
+                        <x-nav-link :href="route('owner.reports.index')" :active="request()->routeIs('owner.reports.*')">Reports</x-nav-link>
                             Transactions
                         </x-nav-link>
                         <x-nav-link :href="route('subscriptions.index')" :active="request()->routeIs('subscriptions.*')">
@@ -140,8 +142,10 @@
                 <x-responsive-nav-link :href="route('admin.users.index')">Users</x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('admin.appointments.index')">Appointments</x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('admin.subscriptions.index')">Subscriptions</x-responsive-nav-link>
+                <x-dropdown-link :href="route('admin.reports.index')">Reports</x-dropdown-link>
                 <x-responsive-nav-link :href="config('services.strapi.url') . '/admin'" target="_blank">Content (CMS)</x-responsive-nav-link>
             @elseif(auth()->user()->isSalonOwner())
+            <x-responsive-nav-link :href="route('admin.reports.index')">Reports</x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('owner.appointments.index')" :active="request()->routeIs('owner.appointments.*')">Appointments</x-responsive-nav-link>
                 <div class="px-4 pt-3 text-xs font-semibold text-gray-400 uppercase">My Salon</div>
                 <x-responsive-nav-link :href="route('owner.settings.edit')" :active="request()->routeIs('owner.settings.*')">Profile and hours</x-responsive-nav-link>
@@ -151,6 +155,7 @@
                 <div class="px-4 pt-3 text-xs font-semibold text-gray-400 uppercase">Business</div>
                 <x-responsive-nav-link :href="route('owner.customers.index')" :active="request()->routeIs('owner.customers.*')">Customers</x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('owner.transactions.index')" :active="request()->routeIs('owner.transactions.*')">Transactions</x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('owner.reports.index')" :active="request()->routeIs('owner.reports.*')">Reports</x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('subscriptions.index')" :active="request()->routeIs('subscriptions.*')">Subscription</x-responsive-nav-link>
             @else
                 <x-responsive-nav-link :href="route('appointments.create')" :active="request()->routeIs('appointments.create') || request()->routeIs('appointments.book')">Book Appointment</x-responsive-nav-link>

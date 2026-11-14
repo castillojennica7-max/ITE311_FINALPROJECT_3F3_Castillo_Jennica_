@@ -20,7 +20,8 @@ use App\Http\Controllers\PublicSalonController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Admin\ReportController as AdminReportController;
+use App\Http\Controllers\Owner\ReportController as OwnerReportController;
 // Public: landing page, listahan ng salon, at pahina ng bawat salon
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/salons', [PublicSalonController::class, 'index'])->name('salons.index');
@@ -69,6 +70,12 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('/subscriptions', [AdminSubscriptionController::class, 'index'])->name('subscriptions.index');
         Route::get('/salons', [AdminSalonController::class, 'index'])->name('salons.index');
         Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+        Route::patch('/users/{user}/suspend', [AdminUserController::class, 'suspend'])->name('users.suspend');
+Route::patch('/users/{user}/restore', [AdminUserController::class, 'restore'])->name('users.restore');
+Route::patch('/salons/{salon}/suspend', [AdminSalonController::class, 'suspend'])->name('salons.suspend');
+Route::patch('/salons/{salon}/restore', [AdminSalonController::class, 'restore'])->name('salons.restore');
+Route::get('/reports', [AdminReportController::class, 'index'])->name('reports.index');
+Route::get('/reports/export/{type}', [AdminReportController::class, 'export'])->name('reports.export');
     });
 
 // Para sa salon owner na may aktibong subscription
@@ -89,6 +96,9 @@ Route::middleware(['auth', 'role:salon_owner', 'subscribed'])
         Route::get('/transactions', [OwnerTransactionController::class, 'index'])->name('transactions.index');
         Route::get('/appointments/{appointment}/payment', [OwnerTransactionController::class, 'create'])->name('transactions.create');
         Route::post('/appointments/{appointment}/payment', [OwnerTransactionController::class, 'store'])->name('transactions.store');
+
+        Route::get('/reports', [OwnerReportController::class, 'index'])->name('reports.index');
+Route::get('/reports/export/{type}', [OwnerReportController::class, 'export'])->name('reports.export');
 
         Route::get('/settings', [OwnerSalonController::class, 'edit'])->name('settings.edit');
         Route::patch('/settings', [OwnerSalonController::class, 'update'])->name('settings.update');

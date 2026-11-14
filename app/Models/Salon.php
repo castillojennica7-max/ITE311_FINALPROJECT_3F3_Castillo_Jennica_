@@ -34,6 +34,7 @@ class Salon extends Model
 
     protected $casts = [
         'opening_hours' => 'array',
+        'suspended_at'  => 'datetime',
     ];
 
     // ---------- Relationships ----------
@@ -75,15 +76,23 @@ class Salon extends Model
 
     // ---------- Subscription ----------
 
-    // Aktibo ang salon kung may aktibong subscription
+    // Suspendido ang salon kung ito mismo o ang may-ari nito ay sinuspinde ng admin
+    public function isSuspended(): bool
+    {
+        return $this->suspended_at !== null || $this->owner?->suspended_at !== null;
+    }
+
+    // Aktibo ang salon kung hindi suspendido at may aktibong subscription
     public function isActive(): bool
     {
-        return $this->subscriptions()->active()->exists();
+        return ! $this->isSuspended() && $this->subscriptions()->active()->exists();
     }
 
     public function scopeActive(Builder $query): Builder
     {
-        return $query->whereHas('subscriptions', fn ($s) => $s->active());
+        return $query->whereNull('suspended_at')
+            ->whereHas('owner', fn ($o) => $o->whereNull('suspended_at'))
+            ->whereHas('subscriptions', fn ($s) => $s->active());
     }
 
     // ---------- Opening hours ----------
