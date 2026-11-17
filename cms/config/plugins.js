@@ -23,7 +23,7 @@ const deniedTypes = [
 
 module.exports = () => ({
   'users-permissions': {
-    config: {
+    config: { jwtSecret: env('JWT_SECRET'),
       jwtManagement: 'refresh',
       sessions: {
         httpOnly: true,
