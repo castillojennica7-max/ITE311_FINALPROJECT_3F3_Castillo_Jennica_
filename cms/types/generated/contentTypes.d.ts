@@ -508,6 +508,42 @@ export interface ApiCustomerProfileCustomerProfile
   };
 }
 
+export interface ApiFeaturedServiceFeaturedService
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'featured_services';
+  info: {
+    displayName: 'Featured Service';
+    pluralName: 'featured-services';
+    singularName: 'featured-service';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    icon: Schema.Attribute.Enumeration<
+      ['scissors', 'sparkle', 'gift', 'star', 'tag', 'flame', 'users']
+    >;
+    image: Schema.Attribute.Media<'images' | 'files'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::featured-service.featured-service'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    sortOrder: Schema.Attribute.Integer;
+    startingPrice: Schema.Attribute.Integer;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiHomePageHomePage extends Struct.SingleTypeSchema {
   collectionName: 'home_pages';
   info: {
@@ -1154,6 +1190,7 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::announcement.announcement': ApiAnnouncementAnnouncement;
       'api::customer-profile.customer-profile': ApiCustomerProfileCustomerProfile;
+      'api::featured-service.featured-service': ApiFeaturedServiceFeaturedService;
       'api::home-page.home-page': ApiHomePageHomePage;
       'api::plan.plan': ApiPlanPlan;
       'api::report.report': ApiReportReport;

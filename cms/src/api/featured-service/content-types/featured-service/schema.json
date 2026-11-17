@@ -1,0 +1,48 @@
+{
+  "kind": "collectionType",
+  "collectionName": "featured_services",
+  "info": {
+    "singularName": "featured-service",
+    "pluralName": "featured-services",
+    "displayName": "Featured Service"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "icon": {
+      "type": "enumeration",
+      "enum": [
+        "scissors",
+        "sparkle",
+        "gift",
+        "star",
+        "tag",
+        "flame",
+        "users"
+      ]
+    },
+    "startingPrice": {
+      "type": "integer"
+    },
+    "sortOrder": {
+      "type": "integer"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files"
+      ]
+    }
+  }
+}
