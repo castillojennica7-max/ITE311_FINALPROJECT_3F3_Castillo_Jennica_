@@ -20,7 +20,7 @@ RUN npm run build
 FROM php:8.3-apache
 
 RUN apt-get update && apt-get install -y \
-    git unzip libzip-dev libicu-dev libonig-dev \
+    git unzip libzip-dev libicu-dev libonig-dev libsqlite3-dev \
     && docker-php-ext-install \
     bcmath intl mbstring opcache pdo_sqlite zip \
     && a2enmod rewrite \
