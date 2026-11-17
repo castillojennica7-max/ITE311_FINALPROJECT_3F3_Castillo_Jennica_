@@ -115,6 +115,35 @@
         </div>
     </section>
 
+    {{-- ============ OUR SERVICES (galing sa Strapi CMS) ============ --}}
+@if(count($featuredServices))
+    <section class="py-20" style="border-top: 4px solid #c45a9a; background-color: #f6e6f0; background-image: radial-gradient(#e2bcd3 1.3px, transparent 1.3px); background-size: 24px 24px;">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center max-w-2xl mx-auto">
+                <p class="text-sm font-bold tracking-widest text-[#c45a9a] uppercase">What you can book</p>
+                <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-gray-900">Our services</h2>
+            </div>
+            <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($featuredServices as $service)
+                    <div class="bg-white rounded-2xl border border-[#f0dce8] shadow-sm hover:shadow-md transition p-6">
+                        <div class="w-12 h-12 rounded-xl bg-[#7b2d5f] text-white flex items-center justify-center">
+                            <x-icon :name="$service['icon'] ?? 'sparkle'" size="w-6 h-6" />
+                        </div>
+                        <h3 class="mt-4 text-lg font-bold text-gray-900">{{ $service['name'] ?? '' }}</h3>
+                        <p class="mt-1 text-gray-600 text-sm leading-relaxed">{{ $service['description'] ?? '' }}</p>
+                        @if(! empty($service['startingPrice']))
+                            <p class="mt-3 text-sm font-semibold text-[#7b2d5f]">From ₱{{ number_format($service['startingPrice']) }}</p>
+                        @endif
+                    </div>
+                @endforeach
+            </div>
+            <div class="mt-8 text-center">
+                <a href="{{ route('salons.index') }}" class="inline-flex px-6 py-3 rounded-full bg-[#7b2d5f] text-white font-semibold hover:bg-[#5f2249] transition">Find a salon</a>
+            </div>
+        </div>
+    </section>
+@endif
+
     {{-- ============ HOW IT WORKS (may tuldok na disenyo) ============ --}}
     <section class="py-20" style="border-top: 4px solid #c45a9a; box-shadow: inset 0 10px 14px -12px rgba(123, 45, 95, 0.35); background-color: #f6e6f0;background-image: radial-gradient(#e2bcd3 1.3px, transparent 1.3px); background-size: 24px 24px;">
         <div class="max-w-6xl mx-auto px-4">
