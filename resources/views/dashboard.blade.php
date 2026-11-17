@@ -166,7 +166,7 @@
                                     <x-status-badge :status="$next->status" />
                                 </p>
                             @else
-                                <p class="text-gray-700 mt-1">You have no upcoming appointments.</p>
+                                <p class="text-gray-700 mt-1">You have no pending upcoming appointments.</p>
                                 <a href="{{ route('appointments.create') }}"
                                    class="inline-flex items-center gap-2 mt-3 px-4 py-2 rounded-full bg-[#7b2d5f] text-white text-sm font-semibold hover:bg-[#5f2249] transition">
                                     Book an appointment

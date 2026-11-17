@@ -28,11 +28,13 @@ class DashboardController extends Controller
                     'salons'        => Salon::active()->count(),
                 ],
                 'upcoming' => Appointment::with(['user', 'staff'])
-                    ->whereIn('status', ['pending', 'confirmed'])
-                    ->where('appointment_at', '>=', now())
-                    ->orderBy('appointment_at')
-                    ->limit(5)
-                    ->get(),
+    ->whereIn('status', ['pending', 'confirmed'])
+    ->where(function ($q) {
+        $q->where('status', 'pending')->orWhere('appointment_at', '>=', now());
+    })
+    ->orderBy('appointment_at')
+    ->limit(8)
+    ->get(),
             ]);
         }
 
@@ -59,12 +61,14 @@ class DashboardController extends Controller
                 ];
 
                 $upcoming = $salon->appointments()
-                    ->with(['user', 'staff'])
-                    ->whereIn('status', ['pending', 'confirmed'])
-                    ->where('appointment_at', '>=', now())
-                    ->orderBy('appointment_at')
-                    ->limit(5)
-                    ->get();
+    ->with(['user', 'staff'])
+    ->whereIn('status', ['pending', 'confirmed'])
+    ->where(function ($q) {
+        $q->where('status', 'pending')->orWhere('appointment_at', '>=', now());
+    })
+    ->orderBy('appointment_at')
+    ->limit(8)
+    ->get();
             }
 
             return view('dashboard-owner', compact('salon', 'subscription', 'stats', 'upcoming'));

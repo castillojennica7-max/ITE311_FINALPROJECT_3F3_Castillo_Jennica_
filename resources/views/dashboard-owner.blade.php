@@ -104,7 +104,7 @@
                     {{-- Mga paparating na appointment --}}
                     <div class="lg:col-span-2 bg-white rounded-2xl border border-[#f0dce8] shadow-sm overflow-hidden">
                         <div class="flex items-center justify-between px-5 pt-5">
-                            <p class="font-bold text-[#7b2d5f]">Upcoming appointments</p>
+                            <p class="font-bold text-[#7b2d5f]">Pending and Upcoming Appointments</p>
                             <a href="{{ route('owner.appointments.index') }}" class="text-sm font-semibold text-[#7b2d5f] hover:underline">View all</a>
                         </div>
                         <div class="overflow-x-auto">
