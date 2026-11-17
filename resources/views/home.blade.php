@@ -125,17 +125,31 @@
             </div>
             <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($featuredServices as $service)
-                    <div class="bg-white rounded-2xl border border-[#f0dce8] shadow-sm hover:shadow-md transition p-6">
-                        <div class="w-12 h-12 rounded-xl bg-[#7b2d5f] text-white flex items-center justify-center">
-                            <x-icon :name="$service['icon'] ?? 'sparkle'" size="w-6 h-6" />
-                        </div>
-                        <h3 class="mt-4 text-lg font-bold text-gray-900">{{ $service['name'] ?? '' }}</h3>
-                        <p class="mt-1 text-gray-600 text-sm leading-relaxed">{{ $service['description'] ?? '' }}</p>
-                        @if(! empty($service['startingPrice']))
-                            <p class="mt-3 text-sm font-semibold text-[#7b2d5f]">From ₱{{ number_format($service['startingPrice']) }}</p>
-                        @endif
-                    </div>
-                @endforeach
+    @php
+        $imgUrl = $service['image']['formats']['medium']['url'] ?? $service['image']['url'] ?? null;
+        if ($imgUrl && ! str_starts_with($imgUrl, 'http')) {
+            $imgUrl = rtrim(config('services.strapi.url'), '/') . $imgUrl;
+        }
+    @endphp
+    <div class="group bg-white rounded-2xl border border-[#f0dce8] shadow-sm hover:shadow-lg transition overflow-hidden">
+        <div class="relative h-44 overflow-hidden {{ $imgUrl ? '' : 'bg-gradient-to-br from-[#7b2d5f] to-[#c45a9a]' }}">
+            @if($imgUrl)
+                <img src="{{ $imgUrl }}" alt="{{ $service['name'] ?? '' }}" loading="lazy"
+                     class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            @endif
+            <span class="absolute bottom-3 left-3 w-11 h-11 rounded-xl bg-white text-[#7b2d5f] shadow flex items-center justify-center">
+                <x-icon :name="$service['icon'] ?? 'sparkle'" size="w-5 h-5" />
+            </span>
+        </div>
+        <div class="p-6">
+            <h3 class="text-lg font-bold text-gray-900">{{ $service['name'] ?? '' }}</h3>
+            <p class="mt-1 text-gray-600 text-sm leading-relaxed">{{ $service['description'] ?? '' }}</p>
+            @if(! empty($service['startingPrice']))
+                <p class="mt-3 text-sm font-semibold text-[#7b2d5f]">From ₱{{ number_format($service['startingPrice']) }}</p>
+            @endif
+        </div>
+    </div>
+@endforeach
             </div>
             <div class="mt-8 text-center">
                 <a href="{{ route('salons.index') }}" class="inline-flex px-6 py-3 rounded-full bg-[#7b2d5f] text-white font-semibold hover:bg-[#5f2249] transition">Find a salon</a>

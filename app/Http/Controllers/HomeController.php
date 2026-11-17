@@ -23,7 +23,7 @@ class HomeController extends Controller
             'pagination' => ['pageSize' => 3],
         ]);
         $plans = $this->fetch("$base/api/plans", ['sort' => 'price:asc']);
-        $featuredServices = $this->fetch("$base/api/featured-services", ['sort' => 'sortOrder:asc']);
+        $featuredServices = $this->fetch("$base/api/featured-services", ['sort' => 'sortOrder:asc', 'populate' => 'image']);
 
         $announcementList = collect($announcements['data'] ?? [])->map(fn ($a) => [
             'title' => $a['title'] ?? '',
