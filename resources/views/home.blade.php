@@ -95,7 +95,7 @@
     </section>
 
     {{-- ============ ABOUT (puting banda) ============ --}}
-    <section id="about" class="py-20" style="background-color: #f6e6f0; background-image: radial-gradient(#e2bcd3 1.3px, transparent 1.3px); background-size: 24px 24px;">
+    <section id="about" class="py-20" style="border-top: 4px solid #c45a9a; box-shadow: inset 0 10px 14px -12px rgba(123, 45, 95, 0.35); background-color: #f6e6f0; background-image: radial-gradient(#e2bcd3 1.3px, transparent 1.3px); background-size: 24px 24px;">
         <div class="max-w-6xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center">
             <div>
                 <p class="text-sm font-bold tracking-widest text-[#c45a9a] uppercase">Who we are</p>
@@ -116,7 +116,7 @@
     </section>
 
     {{-- ============ HOW IT WORKS (may tuldok na disenyo) ============ --}}
-    <section class="py-20" style="background-color: #f6e6f0; background-image: radial-gradient(#e2bcd3 1.3px, transparent 1.3px); background-size: 24px 24px;">
+    <section class="py-20" style="border-top: 4px solid #c45a9a; box-shadow: inset 0 10px 14px -12px rgba(123, 45, 95, 0.35); background-color: #f6e6f0;background-image: radial-gradient(#e2bcd3 1.3px, transparent 1.3px); background-size: 24px 24px;">
         <div class="max-w-6xl mx-auto px-4">
             <div class="text-center max-w-2xl mx-auto">
                 <p class="text-sm font-bold tracking-widest text-[#c45a9a] uppercase">How it works</p>
@@ -151,7 +151,7 @@
     </section>
 
     {{-- ============ ANNOUNCEMENTS ============ --}}
-    <section class="py-20" style="background-color: #f6e6f0; background-image: radial-gradient(#e2bcd3 1.3px, transparent 1.3px); background-size: 24px 24px;">
+    <section class="py-20" style="border-top: 4px solid #c45a9a; box-shadow: inset 0 10px 14px -12px rgba(123, 45, 95, 0.35); background-color: #f6e6f0; background-image: radial-gradient(#e2bcd3 1.3px, transparent 1.3px); background-size: 24px 24px;">
         <div class="max-w-6xl mx-auto px-4">
             <p class="text-sm font-bold tracking-widest text-[#c45a9a] uppercase">What's new</p>
             <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-gray-900">Latest announcements</h2>
@@ -178,7 +178,7 @@
     </section>
 
     {{-- ============ PROMOTIONS AND BUNDLES (may kulay na banda) ============ --}}
-    <section class="py-20" style="background-color: #f6e6f0; background-image: radial-gradient(#e2bcd3 1.3px, transparent 1.3px); background-size: 24px 24px;">
+    <section class="py-20" style="border-top: 4px solid #c45a9a; box-shadow: inset 0 10px 14px -12px rgba(123, 45, 95, 0.35); background-color: #f6e6f0; background-image: radial-gradient(#e2bcd3 1.3px, transparent 1.3px); background-size: 24px 24px;">
         <div class="max-w-6xl mx-auto px-4">
             <p class="text-sm font-bold tracking-widest text-[#7b2d5f] uppercase">Save more</p>
             <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-gray-900">Promotions and bundles</h2>
@@ -221,7 +221,7 @@
     </section>
 
     {{-- ============ PARTNER SALONS (puting banda) ============ --}}
-    <section class="py-20" style="background-color: #f6e6f0; background-image: radial-gradient(#e2bcd3 1.3px, transparent 1.3px); background-size: 24px 24px;">
+    <section class="py-20" style="border-top: 4px solid #c45a9a; box-shadow: inset 0 10px 14px -12px rgba(123, 45, 95, 0.35); background-color: #f6e6f0; background-image: radial-gradient(#e2bcd3 1.3px, transparent 1.3px); background-size: 24px 24px;">
         <div class="max-w-6xl mx-auto px-4">
             <div class="flex items-end justify-between flex-wrap gap-3">
                 <div>
@@ -243,7 +243,7 @@
     </section>
 
     {{-- ============ PLANS ============ --}}
-    <section id="plans" class="py-20" style="background-color: #f6e6f0; background-image: radial-gradient(#e2bcd3 1.3px, transparent 1.3px); background-size: 24px 24px;">
+    <section id="plans" class="py-20" style="border-top: 4px solid #c45a9a; box-shadow: inset 0 10px 14px -12px rgba(123, 45, 95, 0.35); background-color: #f6e6f0; background-image: radial-gradient(#e2bcd3 1.3px, transparent 1.3px); background-size: 24px 24px;">
         <div class="max-w-6xl mx-auto px-4">
             <div class="text-center max-w-2xl mx-auto">
                 <p class="text-sm font-bold tracking-widest text-[#7b2d5f] uppercase">For salon owners</p>
