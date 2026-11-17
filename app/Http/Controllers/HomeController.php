@@ -88,4 +88,27 @@ class HomeController extends Controller
 
     return null;
 }
+
+
+    private function blocksToText(array $blocks): string
+    {
+        $lines = [];
+
+        foreach ($blocks as $block) {
+            $text = '';
+
+            if (isset($block['text'])) {
+                $text = $block['text'];
+            } elseif (isset($block['children']) && is_array($block['children'])) {
+                $text = $this->blocksToText($block['children']);
+            }
+
+            if ($text !== '') {
+                $lines[] = $text;
+            }
+        }
+
+        return implode("\n", $lines);
+    }
+
 }
