@@ -17,7 +17,7 @@ RUN npm run build
 
 
 # Stage 2: Laravel + Apache
-FROM php:8.5-apache
+FROM php:8.4-apache
 
 RUN apt-get update && apt-get install -y \
     git unzip libzip-dev libicu-dev libonig-dev libsqlite3-dev \
