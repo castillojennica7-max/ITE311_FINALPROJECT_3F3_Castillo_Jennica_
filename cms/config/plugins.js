@@ -21,7 +21,7 @@ const deniedTypes = [
   'application/x-mach-binary',
 ];
 
-module.exports = () => ({
+module.exports = ({ env }) => ({
   'users-permissions': {
     config: { jwtSecret: env('JWT_SECRET'),
       jwtManagement: 'refresh',
