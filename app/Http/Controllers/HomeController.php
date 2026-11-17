@@ -60,38 +60,32 @@ class HomeController extends Controller
     }
 
     private function fetch(string $url, array $query = []): ?array
-    {
-        try {
-            $response = Http::timeout(5)->acceptJson()->get($url, $query);
+{
+    try {
+        $token = config('services.strapi.token');
 
-            if ($response->successful()) {
-                return $response->json();
-            }
-        } catch (\Throwable $e) {
-            Log::warning('Strapi request failed: ' . $e->getMessage());
+        $request = Http::timeout(10)->acceptJson();
+
+        if ($token) {
+            $request = $request->withToken($token);
         }
 
-        return null;
-    }
+        $response = $request->get($url, $query);
 
-    // Ang rich text ng Strapi ay dumarating bilang JSON blocks; ginagawa nating plain text.
-    private function blocksToText($nodes): string
-    {
-        $out = '';
-
-        foreach ((array) $nodes as $node) {
-            if (($node['type'] ?? '') === 'text') {
-                $out .= $node['text'] ?? '';
-                continue;
-            }
-
-            $out .= $this->blocksToText($node['children'] ?? []);
-
-            if (in_array($node['type'] ?? '', ['paragraph', 'heading', 'list-item', 'quote', 'code'])) {
-                $out .= "\n";
-            }
+        if ($response->successful()) {
+            return $response->json();
         }
 
-        return trim($out);
+        Log::warning('Strapi API returned an error', [
+            'url' => $url,
+            'status' => $response->status(),
+            'body' => $response->body(),
+        ]);
+
+    } catch (\Throwable $e) {
+        Log::warning('Strapi request failed: ' . $e->getMessage());
     }
+
+    return null;
+}
 }
