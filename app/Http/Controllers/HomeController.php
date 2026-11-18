@@ -59,35 +59,25 @@ class HomeController extends Controller
         ]);
     }
 
-    private function fetch(string $url, array $query = []): ?array
-{
-    try {
-        $token = config('services.strapi.token');
+       private function fetch(string $url, array $query = []): ?array
+    {
+        try {
+            $response = Http::timeout(10)->acceptJson()->get($url, $query);
 
-        $request = Http::timeout(10)->acceptJson();
+            if ($response->successful()) {
+                return $response->json();
+            }
 
-        if ($token) {
-            $request = $request->withToken($token);
+            Log::warning('Strapi API returned an error', [
+                'url' => $url,
+                'status' => $response->status(),
+            ]);
+        } catch (\Throwable $e) {
+            Log::warning('Strapi request failed: ' . $e->getMessage());
         }
 
-        $response = $request->get($url, $query);
-
-        if ($response->successful()) {
-            return $response->json();
-        }
-
-        Log::warning('Strapi API returned an error', [
-            'url' => $url,
-            'status' => $response->status(),
-            'body' => $response->body(),
-        ]);
-
-    } catch (\Throwable $e) {
-        Log::warning('Strapi request failed: ' . $e->getMessage());
+        return null;
     }
-
-    return null;
-}
 
 
     private function blocksToText(array $blocks): string
